@@ -40,6 +40,17 @@ public class Category {
         }
     }
 
+    public Category(UUID id, String name, String description, Boolean isActive) {
+        this.setId(id);
+        this.setName(name);
+        this.setDescription(description);
+        if (isActive) {
+            this.active();
+        } else {
+            this.deactivate();
+        }
+    }
+
     public UUID getId() {
         return this.id;
     }

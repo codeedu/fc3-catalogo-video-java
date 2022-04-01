@@ -2,8 +2,10 @@ package com.fullcycle.CatalogoVideo.infrastructure.data;
 
 import java.util.UUID;
 
-import org.springframework.data.repository.CrudRepository;
+import com.fullcycle.CatalogoVideo.infrastructure.persistence.CategoryPersistence;
 
-public interface SpringDataCategoryRepository extends CrudRepository<null, UUID> {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface SpringDataCategoryRepository extends JpaRepository<CategoryPersistence, UUID> {
     
 }
