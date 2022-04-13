@@ -8,11 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
+import com.fullcycle.CatalogoVideo.application.category.get.FindByIdCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.exception.NotFoundException;
-import com.fullcycle.CatalogoVideo.application.usecase.category.common.CategoryOutputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.get.FindByIdCategoryUseCase;
-import com.fullcycle.CatalogoVideo.domain.entity.Category;
-import com.fullcycle.CatalogoVideo.domain.repository.ICategoryRepository;
+import com.fullcycle.CatalogoVideo.domain.category.Category;
+import com.fullcycle.CatalogoVideo.domain.category.repository.ICategoryRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

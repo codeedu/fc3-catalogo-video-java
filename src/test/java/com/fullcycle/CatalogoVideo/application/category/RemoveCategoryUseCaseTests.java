@@ -5,10 +5,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
 import static org.assertj.core.api.Assertions.assertThat;
 
-
-import com.fullcycle.CatalogoVideo.application.usecase.category.delete.RemoveCategoryUseCase;
-import com.fullcycle.CatalogoVideo.domain.entity.Category;
-import com.fullcycle.CatalogoVideo.domain.repository.ICategoryRepository;
+import com.fullcycle.CatalogoVideo.application.category.delete.RemoveCategoryUseCase;
+import com.fullcycle.CatalogoVideo.domain.category.Category;
+import com.fullcycle.CatalogoVideo.domain.category.repository.ICategoryRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

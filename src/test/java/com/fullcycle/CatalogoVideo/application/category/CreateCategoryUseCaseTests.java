@@ -1,10 +1,10 @@
 package com.fullcycle.CatalogoVideo.application.category;
 
-import com.fullcycle.CatalogoVideo.application.usecase.category.common.CategoryOutputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.create.CreateCategoryInputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.create.CreateCategoryUseCase;
-import com.fullcycle.CatalogoVideo.domain.entity.Category;
-import com.fullcycle.CatalogoVideo.domain.repository.ICategoryRepository;
+import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
+import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryInputData;
+import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryUseCase;
+import com.fullcycle.CatalogoVideo.domain.category.Category;
+import com.fullcycle.CatalogoVideo.domain.category.repository.ICategoryRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;

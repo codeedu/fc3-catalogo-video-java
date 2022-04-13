@@ -12,9 +12,9 @@ import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import java.util.UUID;
 
-import com.fullcycle.CatalogoVideo.application.usecase.category.common.CategoryOutputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.create.CreateCategoryInputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.update.UpdateCategoryInputData;
+import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
+import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryInputData;
+import com.fullcycle.CatalogoVideo.application.category.update.UpdateCategoryInputData;
 
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.CREATED;

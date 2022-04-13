@@ -2,16 +2,16 @@ package com.fullcycle.CatalogoVideo.api.category;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fullcycle.CatalogoVideo.api.configuration.GlobalExceptionHandler;
-import com.fullcycle.CatalogoVideo.application.usecase.category.common.CategoryOutputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.create.CreateCategoryInputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.create.ICreateCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.delete.IRemoveCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.findall.IFindAllCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.get.IFindByIdCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.update.IUpdateCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.update.UpdateCategoryInputData;
-import com.fullcycle.CatalogoVideo.domain.entity.Category;
-import com.fullcycle.CatalogoVideo.domain.repository.ICategoryRepository;
+import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
+import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryInputData;
+import com.fullcycle.CatalogoVideo.application.category.create.ICreateCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.delete.IRemoveCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.findall.IFindAllCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.get.IFindByIdCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.update.IUpdateCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.update.UpdateCategoryInputData;
+import com.fullcycle.CatalogoVideo.domain.category.Category;
+import com.fullcycle.CatalogoVideo.domain.category.repository.ICategoryRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
