@@ -44,6 +44,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
 
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ExtendWith(MockitoExtension.class)
@@ -214,6 +215,7 @@ public class CategoryEndpointTests {
         mockMvc.perform(put("/categories/" + entity.getId())
                .contentType(APPLICATION_JSON)
                .content(payload))
+               .andDo(MockMvcResultHandlers.print())
                .andExpect(status().isNoContent());
     }
 }

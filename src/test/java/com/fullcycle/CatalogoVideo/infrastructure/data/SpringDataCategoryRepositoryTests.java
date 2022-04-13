@@ -1,14 +1,14 @@
 package com.fullcycle.CatalogoVideo.infrastructure.data;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.fullcycle.CatalogoVideo.infrastructure.persistence.CategoryPersistence;
 
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -90,7 +90,7 @@ public class SpringDataCategoryRepositoryTests {
         assertThat(actual).hasSize(0);
     }
 
-    @AfterAll
+    @AfterEach
     void initAfterAll() {
         repository.deleteAll();
     }

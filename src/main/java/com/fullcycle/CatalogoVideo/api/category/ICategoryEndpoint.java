@@ -75,5 +75,5 @@ public interface ICategoryEndpoint {
         @ApiResponse(code = 200, message = "Updated Success"),
         @ApiResponse(code = 500, message = "Internal Server Error")
     })    
-    public void update(@PathVariable UUID id, UpdateCategoryInputData input);
+    public void update(@PathVariable UUID id, @RequestBody UpdateCategoryInputData input);
 }
