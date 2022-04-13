@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.fullcycle.CatalogoVideo.infrastructure.category.mysql.CategoryPersistence;
-import com.fullcycle.CatalogoVideo.infrastructure.category.mysql.SpringDataCategoryRepository;
+import com.fullcycle.CatalogoVideo.infrastructure.category.mysql.CategoryRepository;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class SpringDataCategoryRepositoryTests {
  
     @Autowired
-    private SpringDataCategoryRepository repository;
+    private CategoryRepository repository;
 
 
     @BeforeEach

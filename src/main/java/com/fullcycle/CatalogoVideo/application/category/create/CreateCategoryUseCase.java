@@ -2,7 +2,7 @@ package com.fullcycle.CatalogoVideo.application.category.create;
 
 import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
 import com.fullcycle.CatalogoVideo.domain.category.Category;
-import com.fullcycle.CatalogoVideo.domain.category.repository.ICategoryRepository;
+import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
 
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CreateCategoryUseCase implements ICreateCategoryUseCase {
 
-    private ICategoryRepository repository;
+    private ICategoryGateway repository;
 
     @Override
     public CategoryOutputData execute(CreateCategoryInputData input) {

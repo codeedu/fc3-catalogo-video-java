@@ -1,37 +1,35 @@
 package com.fullcycle.CatalogoVideo.application.category;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
 import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryInputData;
 import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryUseCase;
 import com.fullcycle.CatalogoVideo.domain.category.Category;
-import com.fullcycle.CatalogoVideo.domain.category.repository.ICategoryRepository;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
+import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
+import com.fullcycle.CatalogoVideo.runners.UnitTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.Mockito;
 
-@ExtendWith(SpringExtension.class)
-public class CreateCategoryUseCaseTests {
+public class CreateCategoryUseCaseTests extends UnitTest {
     
     @InjectMocks
     private CreateCategoryUseCase useCase; 
 
     @Mock
-    ICategoryRepository repository;
-
+    private ICategoryGateway repository;
 
     @BeforeEach
     void initUseCase() {
-        useCase = new CreateCategoryUseCase(repository);
+        Mockito.reset(repository);
     }
 
     @Test

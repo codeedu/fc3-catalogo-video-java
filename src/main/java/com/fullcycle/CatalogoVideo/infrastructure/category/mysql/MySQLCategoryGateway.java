@@ -3,10 +3,11 @@ package com.fullcycle.CatalogoVideo.infrastructure.category.mysql;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 import com.fullcycle.CatalogoVideo.domain.category.Category;
-import com.fullcycle.CatalogoVideo.domain.category.repository.ICategoryRepository;
+import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
 
 import org.springframework.stereotype.Repository;
 
@@ -14,14 +15,14 @@ import lombok.AllArgsConstructor;
 
 @Repository
 @AllArgsConstructor
-public class MySQLCategoryRepositoryImpl implements ICategoryRepository {
+public class MySQLCategoryGateway implements ICategoryGateway {
 
-    private SpringDataCategoryRepository repository;
+    private CategoryRepository repository;
 
     @Override
     public List<Category> findAll() {
         return repository.findAll()
-                         .parallelStream()
+                         .stream()
                          .map(CategoryPersistence::fromThis)
                          .collect(Collectors.toList());
     }

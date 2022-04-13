@@ -1,4 +1,4 @@
-package com.fullcycle.CatalogoVideo.domain.category.repository;
+package com.fullcycle.CatalogoVideo.domain.category.gateways;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import com.fullcycle.CatalogoVideo.domain.category.Category;
 
-public interface ICategoryRepository {
+public interface ICategoryGateway {
     List<Category> findAll();
     Category create(Category category);
     Optional<Category> findById(UUID id);

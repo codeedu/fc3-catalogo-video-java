@@ -1,39 +1,37 @@
 package com.fullcycle.CatalogoVideo.application.category;
 
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 
 import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
 import com.fullcycle.CatalogoVideo.application.category.findall.FindAllCategoryUseCase;
 import com.fullcycle.CatalogoVideo.domain.category.Category;
-import com.fullcycle.CatalogoVideo.domain.category.repository.ICategoryRepository;
+import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
+import com.fullcycle.CatalogoVideo.runners.UnitTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.Mockito;
 
-@ExtendWith(SpringExtension.class)
-public class FindAllCategoryUseCaseTests {
+public class FindAllCategoryUseCaseTests extends UnitTest {
 
     @InjectMocks
     private FindAllCategoryUseCase useCase; 
 
     @Mock
-    ICategoryRepository repository;
-
+    private ICategoryGateway repository;
 
     @BeforeEach
     void initUseCase() {
-        useCase = new FindAllCategoryUseCase(repository);
+        Mockito.reset(repository);
     }
 
     @Test
