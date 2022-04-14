@@ -6,19 +6,16 @@ import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputDat
 import com.fullcycle.CatalogoVideo.application.exception.NotFoundException;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
 
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
-import lombok.AllArgsConstructor;
-
-@Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FindByIdCategoryUseCase implements IFindByIdCategoryUseCase {
 
-    private ICategoryGateway repository;
+    private final ICategoryGateway gateway;
 
     @Override
-    public CategoryOutputData execute(UUID id) {
-        return repository.findById(id)
+    public CategoryOutputData execute(final UUID id) {
+        return gateway.findById(id)
                          .map(CategoryOutputData::fromDomain)
                          .orElseThrow(() -> new NotFoundException("Category %s not found", id));
     }

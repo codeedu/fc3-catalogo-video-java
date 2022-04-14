@@ -23,7 +23,7 @@ import com.fullcycle.CatalogoVideo.api.configuration.GlobalExceptionHandler;
 import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
 import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryInputData;
 import com.fullcycle.CatalogoVideo.application.category.create.ICreateCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.category.delete.IRemoveCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.delete.IDeleteCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.category.findall.IFindAllCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.category.get.IFindByIdCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.category.update.IUpdateCategoryUseCase;
@@ -59,7 +59,7 @@ public class CategoryEndpointTests extends UnitTest {
     private IFindByIdCategoryUseCase findByIdUseCase;
 
     @Mock
-    private IRemoveCategoryUseCase removeUseCase;
+    private IDeleteCategoryUseCase removeUseCase;
 
     @Mock
     private IUpdateCategoryUseCase updateUseCase;

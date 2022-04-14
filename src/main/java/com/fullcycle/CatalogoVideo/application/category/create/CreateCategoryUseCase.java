@@ -4,23 +4,20 @@ import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputDat
 import com.fullcycle.CatalogoVideo.domain.category.Category;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
 
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
-import lombok.AllArgsConstructor;
-
-@Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CreateCategoryUseCase implements ICreateCategoryUseCase {
 
-    private ICategoryGateway repository;
+    private final ICategoryGateway gateway;
 
     @Override
-    public CategoryOutputData execute(CreateCategoryInputData input) {
-        var created = repository.create(toDomain(input));
+    public CategoryOutputData execute(final CreateCategoryInputData input) {
+        final var created = gateway.create(toDomain(input));
         return CategoryOutputData.fromDomain(created);
     }
     
-    private Category toDomain(CreateCategoryInputData input) {
+    private Category toDomain(final CreateCategoryInputData input) {
         return new Category(
             input.getName(),
             input.getDescription(),

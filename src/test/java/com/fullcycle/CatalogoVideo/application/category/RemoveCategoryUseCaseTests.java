@@ -5,7 +5,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.fullcycle.CatalogoVideo.application.category.delete.RemoveCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.delete.DeleteCategoryUseCase;
 import com.fullcycle.CatalogoVideo.domain.category.Category;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
 import com.fullcycle.CatalogoVideo.runners.UnitTest;
@@ -19,7 +19,7 @@ import org.mockito.Mockito;
 public class RemoveCategoryUseCaseTests extends UnitTest {
 
     @InjectMocks
-    private RemoveCategoryUseCase useCase; 
+    private DeleteCategoryUseCase useCase; 
 
     @Mock
     private ICategoryGateway repository;

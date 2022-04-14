@@ -6,19 +6,16 @@ import com.fullcycle.CatalogoVideo.application.exception.NotFoundException;
 import com.fullcycle.CatalogoVideo.domain.category.Category;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
 
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
-import lombok.AllArgsConstructor;
-
-@Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UpdateCategoryUseCase implements IUpdateCategoryUseCase {
 
-    private ICategoryGateway repository;
+    private final ICategoryGateway gateway;
     
     @Override
     public void execute(UUID id, UpdateCategoryInputData input) {
-        Category category = repository.findById(id)
+        final Category category = gateway.findById(id)
                                       .orElseThrow(() -> new NotFoundException("Category %s not found", id));
         
         category.update(
@@ -27,7 +24,6 @@ public class UpdateCategoryUseCase implements IUpdateCategoryUseCase {
             input.getIsActive()
         );
 
-        repository.update(category);
+        gateway.update(category);
     }
-    
 }

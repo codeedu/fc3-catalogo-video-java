@@ -6,22 +6,19 @@ import java.util.stream.Collectors;
 import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
 
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
-import lombok.AllArgsConstructor;
-
-@Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FindAllCategoryUseCase implements IFindAllCategoryUseCase {
 
-    private ICategoryGateway repository;
+    private final ICategoryGateway gateway;
     
     @Override
     public List<CategoryOutputData> execute() {
-        var list = repository.findAll();
-        return list.stream()
-                   .map(c -> CategoryOutputData.fromDomain(c))
-                   .collect(Collectors.toList());
+        return gateway.findAll()
+                .stream()
+                .map(c -> CategoryOutputData.fromDomain(c))
+                .collect(Collectors.toList());
     }
     
 }

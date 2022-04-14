@@ -6,7 +6,7 @@ import java.util.UUID;
 import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
 import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryInputData;
 import com.fullcycle.CatalogoVideo.application.category.create.ICreateCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.category.delete.IRemoveCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.delete.IDeleteCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.category.findall.IFindAllCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.category.get.IFindByIdCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.category.update.IUpdateCategoryUseCase;
@@ -23,7 +23,7 @@ public class CategoryEndpoint implements ICategoryEndpoint {
     private ICreateCategoryUseCase createUseCase;
     private IFindAllCategoryUseCase findAllUseCase;
     private IFindByIdCategoryUseCase findByIdUseCase;
-    private IRemoveCategoryUseCase removeUseCase;
+    private IDeleteCategoryUseCase removeUseCase;
     private IUpdateCategoryUseCase updateUseCase;
 
     @Override
