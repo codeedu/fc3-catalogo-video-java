@@ -37,13 +37,13 @@ public class UpdateCategoryUseCaseTests extends UnitTest {
 
     @Test
     public void executeReturnsUpdatedCategoryName() throws Exception {
-        Category category = new Category(
+        Category category = Category.newCategory(
             "Action",
             "Action Description",
             true
         );
 
-        Category expected = new Category(
+        Category expected = Category.newCategory(
             "Action 2",
             "Description",
             true
@@ -78,13 +78,13 @@ public class UpdateCategoryUseCaseTests extends UnitTest {
 
     @Test
     public void executeReturnsUpdatedCategory() throws Exception {
-        Category category = new Category(
+        Category category = Category.newCategory(
             "Action",
             "Action Description",
             true
         );
 
-        Category expected = new Category(
+        Category expected = Category.newCategory(
             "Action 2",
             "Description 2",
             false
@@ -121,7 +121,7 @@ public class UpdateCategoryUseCaseTests extends UnitTest {
 
     @Test
     public void throwNotFoundExceptionWhenIdIsWrong() {
-        Category category = new Category(
+        Category category = Category.newCategory(
             "Action",
             "Action Description",
             true

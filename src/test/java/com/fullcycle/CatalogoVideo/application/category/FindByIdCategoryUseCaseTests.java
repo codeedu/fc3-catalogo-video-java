@@ -2,7 +2,6 @@ package com.fullcycle.CatalogoVideo.application.category;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -36,7 +35,7 @@ public class FindByIdCategoryUseCaseTests extends UnitTest {
 
     @Test
     public void executeReturnsFindById() {
-        Category category = new Category(
+        Category category = Category.newCategory(
             "Action",
             "Action Description",
             true

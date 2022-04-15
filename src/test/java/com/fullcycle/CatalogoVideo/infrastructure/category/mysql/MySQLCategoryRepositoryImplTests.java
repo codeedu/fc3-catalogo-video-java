@@ -36,12 +36,12 @@ public class MySQLCategoryRepositoryImplTests extends UnitTest {
 
     @Test
     public void saveCategory() {
-        Category expected = new Category(
+        Category expected = Category.newCategory(
             "Action",
             "Action Description",
             true
         );
-        Category input = new Category(
+        Category input = Category.newCategory(
             "Action",
             "Action Description",
             true            
@@ -61,12 +61,12 @@ public class MySQLCategoryRepositoryImplTests extends UnitTest {
 
     @Test
     public void findAllCategories() {
-        Category entity1 = new Category(
+        Category entity1 = Category.newCategory(
             "Action",
             "Action Description",
             true
         );
-        Category entity2 = new Category(
+        Category entity2 = Category.newCategory(
             "Horror",
             "Horror Description",
             true            
@@ -89,7 +89,7 @@ public class MySQLCategoryRepositoryImplTests extends UnitTest {
 
     @Test
     public void findByIdCategory() {
-        Category entity = new Category(
+        Category entity = Category.newCategory(
             "Action",
             "Action Description",
             true
@@ -109,7 +109,7 @@ public class MySQLCategoryRepositoryImplTests extends UnitTest {
 
     @Test
     public void deleteCategory() {
-        Category entity = new Category(
+        Category entity = Category.newCategory(
             "Action",
             "Action Description",
             true
@@ -126,12 +126,12 @@ public class MySQLCategoryRepositoryImplTests extends UnitTest {
 
     @Test
     public void updateCategory() {
-        Category expected = new Category(
+        Category expected = Category.newCategory(
             "Action",
             "Action Description",
             true
         );
-        Category input = new Category(
+        Category input = Category.newCategory(
             "Action",
             "Action Description",
             true            

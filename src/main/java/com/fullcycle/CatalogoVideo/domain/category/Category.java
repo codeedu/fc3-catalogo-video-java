@@ -1,5 +1,6 @@
 package com.fullcycle.CatalogoVideo.domain.category;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.fullcycle.CatalogoVideo.domain.exception.NotBlankException;
@@ -10,60 +11,90 @@ public class Category {
     private UUID id;
     private String name;
     private String description;
-    private Boolean isActive = true;
+    private Boolean isActive;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private LocalDateTime deletedAt;
 
-    public Category(UUID id, String name, String description) {
+    public Category(
+        final UUID id,
+        final String name, 
+        final String description, 
+        final Boolean isActive, 
+        final LocalDateTime createdAt, 
+        final LocalDateTime updatedAt, 
+        final LocalDateTime deletedAt
+    ) {
         this.setId(id);
         this.setName(name);
         this.setDescription(description);
+        this.setIsActive(isActive);
+        this.setCreatedAt(createdAt);
+        this.setUpdatedAt(updatedAt);
+        this.setDeletedAt(deletedAt);
     }
 
-    public Category(String name, String description) {
-        this.id = UUID.randomUUID();
-        this.setName(name);
-        this.setDescription(description);
-    }
-
-    public Category(String name) {
-        this.id = UUID.randomUUID();
-        this.setName(name);
-    }
-
-    public Category(String name, String description, Boolean isActive) {
-        this.id = UUID.randomUUID();
-        this.setName(name);
-        this.setDescription(description);
-        if (isActive) {
-            this.active();
-        } else {
-            this.deactivate();
-        }
-    }
-
-    public Category(UUID id, String name, String description, Boolean isActive) {
-        this.setId(id);
-        this.setName(name);
-        this.setDescription(description);
-        if (isActive) {
-            this.active();
-        } else {
-            this.deactivate();
-        }
+    public static Category newCategory(final String name, final String description, final Boolean isActive) {
+        final LocalDateTime now = LocalDateTime.now();
+        return new Category(UUID.randomUUID(), name, description, isActive, now, now, null);
     }
 
     public UUID getId() {
         return this.id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public String getName() {
         return this.name;
     }
 
-    public void setName(String name) {
+    public String getDescription() {
+        return this.description;
+    }
+
+    public Boolean getIsActive() {
+        return this.isActive;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return this.updatedAt;
+    }
+    
+    public LocalDateTime getDeletedAt() {
+        return this.deletedAt;
+    }
+
+    public Boolean active() {
+        this.setDeletedAt(null);
+        return this.isActive = true;
+    }
+
+    public Boolean deactivate() {
+        if (getDeletedAt() == null) {
+            this.setDeletedAt(LocalDateTime.now());
+        }
+        return this.isActive = false;
+    }
+
+    public void update(final String name, final String description, final Boolean isActive) {
+        this.setName(name);
+        this.setDescription(description);
+        this.setUpdatedAt(LocalDateTime.now());
+        if (isActive != null && isActive) {
+            this.active();
+        } else {
+            this.deactivate();
+        }
+    }
+
+    private void setId(final UUID id) {
+        this.id = id;
+    }
+
+    private void setName(final String name) {
         if (name == null) {
             throw new NotNullException("Can not be null");
         }
@@ -74,35 +105,23 @@ public class Category {
         this.name = name;
     }
 
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(String description) {
+    private void setDescription(final String description) {
         this.description = description;
     }
 
-    public Boolean getIsActive() {
-        return this.isActive;
+    private void setCreatedAt(final LocalDateTime date) {
+        this.createdAt = date != null ? date : LocalDateTime.now();
     }
 
-    public Boolean active() {
-        return this.isActive = true;
+    private void setUpdatedAt(final LocalDateTime date) {
+        this.updatedAt = date != null ? date : LocalDateTime.now();
     }
 
-    public Boolean deactivate() {
-        return this.isActive = false;
+    private void setDeletedAt(final LocalDateTime date) {
+        this.deletedAt = date;
     }
-
-    public void update(String name, String description, Boolean isActive) {
-        this.setName(name);
-        this.setDescription(description);
-        if (isActive != null && isActive != this.getIsActive()) {
-            if (isActive == true) {
-                this.active();
-            } else {
-                this.deactivate();
-            }
-        }
+    
+    private void setIsActive(final Boolean active) {
+        this.isActive = active;
     }
 }

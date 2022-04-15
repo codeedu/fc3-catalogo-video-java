@@ -37,17 +37,17 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
     @Test
     public void executeReturnsFindAllCategory() {
         List<Category> categories = Arrays.asList(
-            new Category(
+            Category.newCategory(
                 "Action",
                 "Action Description",
                 true
             ),
-            new Category(
+            Category.newCategory(
                 "Horror",
                 "Horror Description",
                 true
             ),
-            new Category(
+            Category.newCategory(
                 "Suspense",
                 "Suspense Description",
                 true
@@ -61,7 +61,7 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
         //     .when(repository)
         //     .findAll();
 
-        List<CategoryOutputData> actual = useCase.execute();
+        useCase.execute();
         repository.findAll();
         
         assertThat(categories).isNotNull();

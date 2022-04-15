@@ -31,7 +31,7 @@ public class RemoveCategoryUseCaseTests extends UnitTest {
 
     @Test
     public void executeReturnsRemove() throws Exception {
-        Category category = new Category(
+        Category category = Category.newCategory(
             "Action",
             "Action Description",
             true

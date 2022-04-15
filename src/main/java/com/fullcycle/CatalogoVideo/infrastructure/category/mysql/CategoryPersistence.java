@@ -1,5 +1,6 @@
 package com.fullcycle.CatalogoVideo.infrastructure.category.mysql;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -41,7 +42,13 @@ public class CategoryPersistence {
     @Column
     private Boolean isActive = true;
 
-    public static CategoryPersistence from(Category category) {
+    private LocalDateTime createdAt;
+    
+    private LocalDateTime updatedAt;
+    
+    private LocalDateTime deletedAt;
+
+    public static CategoryPersistence from(final Category category) {
         if (category == null) {
             throw new NotNullException();
         }
@@ -50,7 +57,10 @@ public class CategoryPersistence {
             category.getId(), 
             category.getName(), 
             category.getDescription(), 
-            category.getIsActive()
+            category.getIsActive(),
+            category.getCreatedAt(),
+            category.getUpdatedAt(),
+            category.getDeletedAt()
         );
 
     }
@@ -60,7 +70,10 @@ public class CategoryPersistence {
             getId(),
             getName(),
             getDescription(),
-            getIsActive()
+            getIsActive(),
+            getCreatedAt(),
+            getUpdatedAt(),
+            getDeletedAt()
         );
     }
 }

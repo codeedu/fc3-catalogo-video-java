@@ -3,7 +3,6 @@ package com.fullcycle.CatalogoVideo.infrastructure.category.mysql;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 import com.fullcycle.CatalogoVideo.domain.category.Category;

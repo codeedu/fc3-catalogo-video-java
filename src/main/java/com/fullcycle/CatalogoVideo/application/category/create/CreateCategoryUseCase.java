@@ -18,7 +18,7 @@ public class CreateCategoryUseCase implements ICreateCategoryUseCase {
     }
     
     private Category toDomain(final CreateCategoryInputData input) {
-        return new Category(
+        return Category.newCategory(
             input.getName(),
             input.getDescription(),
             input.getIsActive()

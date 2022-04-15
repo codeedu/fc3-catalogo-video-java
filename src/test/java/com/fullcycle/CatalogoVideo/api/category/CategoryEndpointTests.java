@@ -90,7 +90,7 @@ public class CategoryEndpointTests extends UnitTest {
 
         final String payload = createJson.write(input).getJson();
 
-        final CategoryOutputData output = CategoryOutputData.fromDomain(new Category(
+        final CategoryOutputData output = CategoryOutputData.fromDomain(Category.newCategory(
             expectedName,
             expectedDescription,
             expectedIsActive
@@ -113,13 +113,13 @@ public class CategoryEndpointTests extends UnitTest {
 
     @Test
     public void findAllCategories() throws Exception {
-        final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(new Category(
+        final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(Category.newCategory(
             "Action",
             "The most watched category",
             true            
         ));
 
-        final CategoryOutputData expectecHorrorCategory = CategoryOutputData.fromDomain(new Category(
+        final CategoryOutputData expectecHorrorCategory = CategoryOutputData.fromDomain(Category.newCategory(
             "Horror",
             "The second most watched category",
             true
@@ -141,7 +141,7 @@ public class CategoryEndpointTests extends UnitTest {
         final String expectedDescription = "The most watched category";
         final boolean expectedIsActive = true;
 
-        final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(new Category(
+        final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(Category.newCategory(
             expectedName,
             expectedDescription,
             expectedIsActive
@@ -179,7 +179,7 @@ public class CategoryEndpointTests extends UnitTest {
         final String expectedDescription = "The most watched category";
         final boolean expectedIsActive = true;
 
-        final Category entity = new Category(
+        final Category entity = Category.newCategory(
             "Action",
             expectedDescription,
             expectedIsActive
