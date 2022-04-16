@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
+import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway.FindAllInput;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,8 +15,12 @@ public class FindAllCategoryUseCase implements IFindAllCategoryUseCase {
     private final ICategoryGateway gateway;
     
     @Override
-    public List<CategoryOutputData> execute() {
-        return gateway.findAll()
+    public List<CategoryOutputData> execute(final Input input) {
+        final FindAllInput gatewayInput = ICategoryGateway.FindAllInput.builder()
+            .search(input.search)
+            .build();
+
+        return gateway.findAll(gatewayInput)
                 .stream()
                 .map(c -> CategoryOutputData.fromDomain(c))
                 .collect(Collectors.toList());

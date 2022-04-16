@@ -31,6 +31,7 @@ import com.fullcycle.CatalogoVideo.application.category.update.UpdateCategoryInp
 import com.fullcycle.CatalogoVideo.domain.category.Category;
 import com.fullcycle.CatalogoVideo.runners.UnitTest;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -125,14 +126,46 @@ public class CategoryEndpointTests extends UnitTest {
             true
         ));  
         
+        final IFindAllCategoryUseCase.Input useCaseInput = IFindAllCategoryUseCase.Input.builder()
+            .search("")
+            .build();
+
         doReturn(List.of(expectecActionCategory, expectecHorrorCategory))
-            .when(findAllUseCase).execute();
+            .when(findAllUseCase).execute(eq(useCaseInput));
 
         mockMvc.perform(get("/categories")
                .contentType(APPLICATION_JSON))
                .andExpect(status().isOk())
                .andExpect(content().contentType(APPLICATION_JSON))
                .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    public void findAllCategoriesBySearchAct() throws Exception {
+        final String expectedSearch = "act";
+
+        final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(Category.newCategory(
+            "Action",
+            "The most watched category",
+            true            
+        ));
+        
+        final IFindAllCategoryUseCase.Input useCaseInput = IFindAllCategoryUseCase.Input.builder()
+            .search(expectedSearch)
+            .build();
+
+        doReturn(List.of(expectecActionCategory))
+            .when(findAllUseCase).execute(eq(useCaseInput));
+
+        mockMvc.perform(
+                    get("/categories")
+                        .queryParam("search", expectedSearch)
+                        .contentType(APPLICATION_JSON)
+                )
+               .andExpect(status().isOk())
+               .andExpect(content().contentType(APPLICATION_JSON))
+               .andExpect(jsonPath("$", hasSize(1)))
+               .andExpect(jsonPath("$.[0].id", Matchers.equalTo(expectecActionCategory.getId().toString())));
     }
 
     @Test

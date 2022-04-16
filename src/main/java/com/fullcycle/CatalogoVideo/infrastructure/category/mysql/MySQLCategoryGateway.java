@@ -19,7 +19,8 @@ public class MySQLCategoryGateway implements ICategoryGateway {
     private CategoryRepository repository;
 
     @Override
-    public List<Category> findAll() {
+    public List<Category> findAll(final FindAllInput input) {
+        // TODO: Implement dynamic search with Specification
         return repository.findAll()
                          .stream()
                          .map(CategoryPersistence::fromThis)

@@ -1,6 +1,7 @@
 package com.fullcycle.CatalogoVideo.api.category;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,7 +49,9 @@ public interface ICategoryEndpoint {
         @ApiResponse(code = 200, message = "List Success"),
         @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public List<CategoryOutputData> findAll();
+    public List<CategoryOutputData> findAll(
+        @RequestParam(name = "search", required = false, defaultValue = "") String search
+    );
 
     @GetMapping("/{id}")
     @ResponseStatus(code = OK)

@@ -1,18 +1,21 @@
 package com.fullcycle.CatalogoVideo.application.category;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
 import com.fullcycle.CatalogoVideo.application.category.findall.FindAllCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.findall.IFindAllCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.findall.IFindAllCategoryUseCase.Input;
 import com.fullcycle.CatalogoVideo.domain.category.Category;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
+import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway.FindAllInput;
 import com.fullcycle.CatalogoVideo.runners.UnitTest;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -54,15 +57,15 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
             )
         );
 
-        when(repository.findAll())
-            .thenReturn(categories);
-        
-        // doReturn(categories)
-        //     .when(repository)
-        //     .findAll();
+        final FindAllInput gatewayInput = ICategoryGateway.FindAllInput.builder()
+            .build();
 
-        useCase.execute();
-        repository.findAll();
+        when(repository.findAll(gatewayInput)).thenReturn(categories);
+
+        useCase.execute(
+            IFindAllCategoryUseCase.Input.builder()
+            .build()
+        );
         
         assertThat(categories).isNotNull();
         assertThat(categories).hasSize(3);
@@ -70,20 +73,23 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
 
     @Test
     public void executeReturnsFindAllCategoryAndListSizeIsZero() {
-        List<Category> categories = new ArrayList<Category>();
+        final String expectedSearch = "act";
 
-        when(repository.findAll())
-            .thenReturn(categories);
+        final FindAllInput gatewayInput = ICategoryGateway.FindAllInput.builder()
+            .search(expectedSearch)
+            .build();
 
-        List<CategoryOutputData> actual = useCase.execute();
-        repository.findAll();
+        when(repository.findAll(eq(gatewayInput))).thenReturn(List.of());
+
+        final Input useCaseInput = IFindAllCategoryUseCase.Input.builder()
+            .search(expectedSearch)
+            .build();
         
-        assertThat(categories).isNotNull();
-        assertThat(categories).hasSize(0);
-
+        final List<CategoryOutputData> actual = useCase.execute(useCaseInput);
+        
         assertThat(actual).isNotNull();
         assertThat(actual).hasSize(0);
         
-        verify(repository, times(2)).findAll();
+        verify(repository, times(1)).findAll(eq(gatewayInput));
     }
 }

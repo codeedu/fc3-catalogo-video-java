@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.fullcycle.CatalogoVideo.domain.category.Category;
+import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
+import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway.FindAllInput;
 import com.fullcycle.CatalogoVideo.runners.UnitTest;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-public class MySQLCategoryRepositoryImplTests extends UnitTest {
+public class MySQLCategoryGatewayImplTests extends UnitTest {
 
     @InjectMocks
     private MySQLCategoryGateway repository;
@@ -77,10 +79,12 @@ public class MySQLCategoryRepositoryImplTests extends UnitTest {
         expected.add(CategoryPersistence.from(entity2));
 
         doReturn(expected)
-            .when(springDataRepository)
-            .findAll();
+            .when(springDataRepository).findAll();
 
-        List<Category> actual = repository.findAll();
+        final FindAllInput findAllInput = ICategoryGateway.FindAllInput.builder()
+        .build();
+
+        List<Category> actual = repository.findAll(findAllInput);
 
         assertThat(actual).isNotNull();
         assertThat(actual).isNotEmpty();
