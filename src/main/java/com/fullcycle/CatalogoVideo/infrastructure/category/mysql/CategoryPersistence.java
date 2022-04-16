@@ -27,7 +27,6 @@ import lombok.NoArgsConstructor;
 public class CategoryPersistence {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "VARBINARY(16)")
     private UUID id;
 

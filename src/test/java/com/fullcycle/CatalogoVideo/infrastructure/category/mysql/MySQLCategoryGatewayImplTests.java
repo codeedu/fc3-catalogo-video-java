@@ -1,162 +1,206 @@
 package com.fullcycle.CatalogoVideo.infrastructure.category.mysql;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import com.fullcycle.CatalogoVideo.domain.category.Category;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway.FindAllInput;
-import com.fullcycle.CatalogoVideo.runners.UnitTest;
+import com.fullcycle.CatalogoVideo.runners.IntegrationTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
 
-public class MySQLCategoryGatewayImplTests extends UnitTest {
+@DataJpaTest
+@Import(MySQLCategoryGateway.class)
+@AutoConfigureTestDatabase(replace = Replace.NONE)
+public class MySQLCategoryGatewayImplTests extends IntegrationTest {
 
-    @InjectMocks
-    private MySQLCategoryGateway repository;
+    @Autowired
+    private MySQLCategoryGateway gateway;
 
-    @Mock
-    private CategoryRepository springDataRepository;
+    @Autowired
+    private CategoryRepository repository;
 
     @BeforeEach
     void beforeEach() {
-        Mockito.reset(springDataRepository);
+        repository.deleteAll();
+        repository.flush();
     }
 
     @Test
     public void saveCategory() {
-        Category expected = Category.newCategory(
-            "Action",
-            "Action Description",
-            true
-        );
-        Category input = Category.newCategory(
-            "Action",
-            "Action Description",
-            true            
-        );
+        final String expectedName = "Action";
+        final String expectedDescription = "Action Description";
+        final Boolean expectedIsActive = true;
 
-        doReturn(CategoryPersistence.from(expected))
-            .when(springDataRepository)
-            .save(any(CategoryPersistence.class));
+        final Category input = Category.newCategory(expectedName, expectedDescription, expectedIsActive);
         
-        Category actual = repository.create(input);
+        final Category actual = gateway.create(input);
 
         assertThat(actual).isNotNull();
-        assertThat(actual.getName()).isEqualTo(expected.getName());
-        assertThat(actual).hasFieldOrPropertyWithValue("name", "Action");
+        assertNotNull(actual.getId());
+        assertNotNull(actual.getCreatedAt());
+        assertNotNull(actual.getUpdatedAt());
+        assertThat(actual.getName()).isEqualTo(expectedName);
+        assertThat(actual.getDescription()).isEqualTo(expectedDescription);
         assertTrue(actual.getIsActive());
+        assertNull(actual.getDeletedAt());
     }
 
     @Test
     public void findAllCategories() {
-        Category entity1 = Category.newCategory(
+        repository.save(CategoryPersistence.from(Category.newCategory(
             "Action",
             "Action Description",
             true
-        );
-        Category entity2 = Category.newCategory(
+        )));
+        
+        repository.save(CategoryPersistence.from(Category.newCategory(
             "Horror",
             "Horror Description",
             true            
-        );        
+        )));
 
-        List<CategoryPersistence> expected = new ArrayList<CategoryPersistence>();
-        expected.add(CategoryPersistence.from(entity1));
-        expected.add(CategoryPersistence.from(entity2));
-
-        doReturn(expected)
-            .when(springDataRepository).findAll();
+        assertEquals(repository.count(), 2);
 
         final FindAllInput findAllInput = ICategoryGateway.FindAllInput.builder()
-        .build();
+            .build();
 
-        List<Category> actual = repository.findAll(findAllInput);
+        final List<Category> actual = gateway.findAll(findAllInput);
 
         assertThat(actual).isNotNull();
-        assertThat(actual).isNotEmpty();
         assertThat(actual).hasSize(2);
     }
 
     @Test
-    public void findByIdCategory() {
-        Category entity = Category.newCategory(
-            "Action",
+    public void givenNamAsSearch_whenMatchesWithActionName_shouldReturnActionCategory() {
+        final var expectedAction = repository.save(CategoryPersistence.from(Category.newCategory(
+            "Action Name",
             "Action Description",
             true
-        );        
+        )));
+        
+        repository.save(CategoryPersistence.from(Category.newCategory(
+            "Horror",
+            "Horror Description",
+            true            
+        )));
 
-        CategoryPersistence input = CategoryPersistence.from(entity);
+        assertEquals(repository.count(), 2);
 
-        doReturn(Optional.of(input))
-            .when(springDataRepository)
-            .findById(entity.getId());
+        final FindAllInput findAllInput = ICategoryGateway.FindAllInput.builder()
+            .search("nam")
+            .build();
 
-        Optional<Category> actual = repository.findById(entity.getId());
+        final List<Category> actual = gateway.findAll(findAllInput);
+
+        assertThat(actual).isNotNull();
+        assertThat(actual).hasSize(1);
+        assertThat(actual.get(0).getId()).isEqualTo(expectedAction.getId());
+    }
+
+    @Test
+    public void givenDescriptionAsSearch_whenMatchesWithActionDescription_shouldReturnActionCategory() {
+        final var expectedAction = repository.save(CategoryPersistence.from(Category.newCategory(
+            "Action Name",
+            "Action Description",
+            true
+        )));
+        
+        repository.save(CategoryPersistence.from(Category.newCategory(
+            "Horror",
+            "Horror",
+            true            
+        )));
+
+        assertEquals(repository.count(), 2);
+
+        final FindAllInput findAllInput = ICategoryGateway.FindAllInput.builder()
+            .search("desc")
+            .build();
+
+        final List<Category> actual = gateway.findAll(findAllInput);
+
+        assertThat(actual).isNotNull();
+        assertThat(actual).hasSize(1);
+        assertThat(actual.get(0).getId()).isEqualTo(expectedAction.getId());
+    }
+
+    @Test
+    public void findByIdCategory() {
+        final var expectedAction = repository.save(CategoryPersistence.from(Category.newCategory(
+            "Action Name",
+            "Action Description",
+            true
+        )));
+
+        final Optional<Category> actual = gateway.findById(expectedAction.getId());
 
         assertThat(actual.isPresent()).isTrue();
-        assertThat(actual).isNotNull();
+
+        final Category category = actual.get();
+        
+        assertEquals(expectedAction.getId(), category.getId());
     }
 
     @Test
     public void deleteCategory() {
-        Category entity = Category.newCategory(
-            "Action",
+        final var expectedAction = repository.save(CategoryPersistence.from(Category.newCategory(
+            "Action Name",
             "Action Description",
             true
-        );    
+        ))); 
 
-        doNothing()
-            .when(springDataRepository)
-            .deleteById(entity.getId());
+        assertEquals(1, repository.count());
 
-        repository.remove(entity.getId());  
+        gateway.remove(expectedAction.getId());  
         
-        verify(springDataRepository, times(1)).deleteById(entity.getId());
+        assertEquals(0, repository.count());
     }
 
     @Test
+    @Transactional
     public void updateCategory() {
-        Category expected = Category.newCategory(
-            "Action",
+        final String expectedNewName = "Horror";
+        final String expectedNewDescription = "The most watched category";
+
+        final Category category = Category.newCategory(
+            "Action Name",
             "Action Description",
-            true
-        );
-        Category input = Category.newCategory(
-            "Action",
-            "Action Description",
-            true            
+            false
         );
 
-        doReturn(CategoryPersistence.from(expected))
-            .when(springDataRepository)
-            .save(any(CategoryPersistence.class));
-        
-        Category toUpdate = repository.create(input);
+        final var actualAction = repository.saveAndFlush(CategoryPersistence.from(category)); 
 
-        toUpdate.update("Horror", toUpdate.getDescription(), false);
+        assertThat(category.getIsActive()).isFalse();
+        assertThat(category.getName()).isEqualTo("Action Name");
+        assertThat(category.getDescription()).isEqualTo("Action Description");
 
-        doReturn(CategoryPersistence.from(toUpdate))
-            .when(springDataRepository)
-            .save(any(CategoryPersistence.class));
+        category.update(expectedNewName, expectedNewDescription, true);
 
-        repository.update(toUpdate);
+        gateway.update(category);
 
-        assertThat(toUpdate).isNotNull();
-        assertThat(toUpdate).hasFieldOrPropertyWithValue("name", "Horror");
-        assertThat(toUpdate.getIsActive()).isFalse();
+        assertThat(category.getIsActive()).isTrue();
+        assertThat(category.getName()).isEqualTo(expectedNewName);
+        assertThat(category.getDescription()).isEqualTo(expectedNewDescription);
+
+        final var persistedCategory = repository.findById(actualAction.getId()).get();
+
+        assertThat(persistedCategory.getIsActive()).isTrue();
+        assertThat(persistedCategory.getName()).isEqualTo(expectedNewName);
+        assertThat(persistedCategory.getDescription()).isEqualTo(expectedNewDescription);
     }
 }
