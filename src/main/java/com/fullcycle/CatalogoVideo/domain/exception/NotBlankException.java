@@ -6,7 +6,7 @@ public class NotBlankException extends DomainException {
         super();
     }
 
-    public NotBlankException(String message) {
-        super(message);
+    public NotBlankException(final String property) {
+        super(property + " can not be blank");
     }
 }

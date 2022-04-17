@@ -75,4 +75,56 @@ public class CategoryE2ETests extends E2eTest {
     assertNotNull(actualPersisted.getUpdatedAt());
     assertNull(actualPersisted.getDeletedAt());
   }
+
+  @Test
+  public void testCreateCategoryWithBlankNameShouldReturnError() throws Exception {
+    final String expectedName = "";
+    final String expectedDescription = "The most watched category";
+    final boolean expectedIsActive = true;
+    final String expectedErrorMessage = "'name' can not be blank";
+
+    final CreateCategoryInputData input = new CreateCategoryInputData();
+    input.setName(expectedName);
+    input.setDescription(expectedDescription);
+    input.setIsActive(expectedIsActive);
+
+    assertEquals(0, repository.count());
+
+    mockMvc.perform(
+      post("/categories")
+        .contentType(APPLICATION_JSON)
+        .content(writeValueAsString(input))
+    )
+      .andExpect(status().isUnprocessableEntity())
+      .andExpect(content().contentType(APPLICATION_JSON))
+      .andExpect(jsonPath("$.message", is(expectedErrorMessage)));
+
+    assertEquals(0, repository.count());
+  }
+
+  @Test
+  public void testCreateCategoryWithNullNameShouldReturnError() throws Exception {
+    final String expectedName = null;
+    final String expectedDescription = "The most watched category";
+    final boolean expectedIsActive = true;
+    final String expectedErrorMessage = "'name' can not be null";
+
+    final CreateCategoryInputData input = new CreateCategoryInputData();
+    input.setName(expectedName);
+    input.setDescription(expectedDescription);
+    input.setIsActive(expectedIsActive);
+
+    assertEquals(0, repository.count());
+
+    mockMvc.perform(
+      post("/categories")
+        .contentType(APPLICATION_JSON)
+        .content(writeValueAsString(input))
+    )
+      .andExpect(status().isUnprocessableEntity())
+      .andExpect(content().contentType(APPLICATION_JSON))
+      .andExpect(jsonPath("$.message", is(expectedErrorMessage)));
+
+    assertEquals(0, repository.count());
+  }
 }

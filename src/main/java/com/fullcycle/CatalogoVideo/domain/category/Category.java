@@ -96,10 +96,10 @@ public class Category {
 
     private void setName(final String name) {
         if (name == null) {
-            throw new NotNullException("Can not be null");
+            throw new NotNullException("'name'");
         }
         if (name.isEmpty()) {
-            throw new NotBlankException("Can not be blank");
+            throw new NotBlankException("'name'");
         }
 
         this.name = name;

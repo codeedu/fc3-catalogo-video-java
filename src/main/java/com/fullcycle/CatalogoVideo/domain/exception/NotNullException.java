@@ -6,7 +6,7 @@ public class NotNullException extends DomainException {
         super();
     }
 
-    public NotNullException(String message) {
-        super(message);
+    public NotNullException(final String property) {
+        super(property + " can not be null");
     }
 }
