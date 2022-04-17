@@ -18,6 +18,10 @@ public class FindAllCategoryUseCase implements IFindAllCategoryUseCase {
     public List<CategoryOutputData> execute(final Input input) {
         final FindAllInput gatewayInput = ICategoryGateway.FindAllInput.builder()
             .search(input.search)
+            .page(input.page)
+            .perPage(input.perPage)
+            .sort(input.sort)
+            .direction(input.direction)
             .build();
 
         return gateway.findAll(gatewayInput)

@@ -39,6 +39,12 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
 
     @Test
     public void executeReturnsFindAllCategory() {
+        final var expectedDefaultSearch = "";
+        final var expectedDefaultPage = 0;
+        final var expectedDefaultPerPage = 15;
+        final var expectedDefaultSort = "name";
+        final var expectedDefaultDir = "asc";
+
         List<Category> categories = Arrays.asList(
             Category.newCategory(
                 "Action",
@@ -57,15 +63,17 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
             )
         );
 
-        final FindAllInput gatewayInput = ICategoryGateway.FindAllInput.builder()
+        final FindAllInput expectedGatewayInput = ICategoryGateway.FindAllInput.builder()
+            .search(expectedDefaultSearch)
+            .page(expectedDefaultPage)
+            .perPage(expectedDefaultPerPage)
+            .sort(expectedDefaultSort)
+            .direction(expectedDefaultDir)
             .build();
 
-        when(repository.findAll(gatewayInput)).thenReturn(categories);
+        when(repository.findAll(expectedGatewayInput)).thenReturn(categories);
 
-        useCase.execute(
-            IFindAllCategoryUseCase.Input.builder()
-            .build()
-        );
+        useCase.execute(IFindAllCategoryUseCase.Input.builder().build());
         
         assertThat(categories).isNotNull();
         assertThat(categories).hasSize(3);
@@ -73,16 +81,28 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
 
     @Test
     public void executeReturnsFindAllCategoryAndListSizeIsZero() {
-        final String expectedSearch = "act";
+        final var expectedSearch = "act";
+        final var expectedPage = 2;
+        final var expectedPerPage = 20;
+        final var expectedSort = "description";
+        final var expectedDir = "desc";
 
-        final FindAllInput gatewayInput = ICategoryGateway.FindAllInput.builder()
+        final FindAllInput expectedGatewayInput = ICategoryGateway.FindAllInput.builder()
             .search(expectedSearch)
+            .page(expectedPage)
+            .perPage(expectedPerPage)
+            .sort(expectedSort)
+            .direction(expectedDir)
             .build();
 
-        when(repository.findAll(eq(gatewayInput))).thenReturn(List.of());
+        when(repository.findAll(eq(expectedGatewayInput))).thenReturn(List.of());
 
         final Input useCaseInput = IFindAllCategoryUseCase.Input.builder()
             .search(expectedSearch)
+            .page(expectedPage)
+            .perPage(expectedPerPage)
+            .sort(expectedSort)
+            .direction(expectedDir)
             .build();
         
         final List<CategoryOutputData> actual = useCase.execute(useCaseInput);
@@ -90,6 +110,6 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
         assertThat(actual).isNotNull();
         assertThat(actual).hasSize(0);
         
-        verify(repository, times(1)).findAll(eq(gatewayInput));
+        verify(repository, times(1)).findAll(eq(expectedGatewayInput));
     }
 }

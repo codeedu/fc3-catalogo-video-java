@@ -21,5 +21,9 @@ public interface ICategoryGateway {
     @Value
     class FindAllInput {
         public String search;
+        public int page;
+        public int perPage;
+        public String sort;
+        public String direction;
     }
 }

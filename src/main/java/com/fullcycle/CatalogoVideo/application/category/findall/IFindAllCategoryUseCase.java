@@ -15,6 +15,7 @@ public interface IFindAllCategoryUseCase {
     @Value
     class Input {
         private static final String DEFAULT_SEARCH = "";
+        private static final int DEFAULT_PER_PAGE = 15;
         private static final String DEFAULT_SORT = "name";
         private static final String DEFAULT_DIRECTION = "asc";
 
@@ -33,7 +34,7 @@ public interface IFindAllCategoryUseCase {
         ) {
             this.search = search != null ? search : DEFAULT_SEARCH;
             this.page = page;
-            this.perPage = perPage;
+            this.perPage = perPage != 0 ? perPage : DEFAULT_PER_PAGE;
             this.sort = sort != null ? sort : DEFAULT_SORT;
             this.direction = dir != null ? dir : DEFAULT_DIRECTION;
         }
