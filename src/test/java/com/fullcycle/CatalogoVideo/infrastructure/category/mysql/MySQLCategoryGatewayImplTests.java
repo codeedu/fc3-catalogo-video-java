@@ -64,7 +64,7 @@ public class MySQLCategoryGatewayImplTests extends IntegrationTest {
         final var expectedItemSize = 2;
         final var expectedPage = 0;
         final var expectedPerPage = 15;
-        final var expectedPagesCount = 1;
+        final var expectedElementsCount = 2;
 
         repository.save(CategoryPersistence.from(Category.newCategory(
             "Action",
@@ -93,7 +93,7 @@ public class MySQLCategoryGatewayImplTests extends IntegrationTest {
         assertThat(actual.getItems()).hasSize(expectedItemSize);
         assertThat(actual.getCurrentPage()).isEqualTo(expectedPage);
         assertThat(actual.getPerPage()).isEqualTo(expectedPerPage);
-        assertThat(actual.getTotal()).isEqualTo(expectedPagesCount);
+        assertThat(actual.getTotal()).isEqualTo(expectedElementsCount);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class MySQLCategoryGatewayImplTests extends IntegrationTest {
         final var expectedItemSize = 1;
         final var expectedPage = 0;
         final var expectedPerPage = 15;
-        final var expectedPagesCount = 1;
+        final var expectedElementsCount = 1;
 
         final var expectedAction = repository.save(CategoryPersistence.from(Category.newCategory(
             "Action Name",
@@ -132,7 +132,7 @@ public class MySQLCategoryGatewayImplTests extends IntegrationTest {
         assertThat(actual.getItems().get(0).getId()).isEqualTo(expectedAction.getId());
         assertThat(actual.getCurrentPage()).isEqualTo(expectedPage);
         assertThat(actual.getPerPage()).isEqualTo(expectedPerPage);
-        assertThat(actual.getTotal()).isEqualTo(expectedPagesCount);
+        assertThat(actual.getTotal()).isEqualTo(expectedElementsCount);
     }
 
     @Test
@@ -140,7 +140,7 @@ public class MySQLCategoryGatewayImplTests extends IntegrationTest {
         final var expectedItemSize = 1;
         final var expectedPage = 0;
         final var expectedPerPage = 15;
-        final var expectedPagesCount = 1;
+        final var expectedElementsCount = 1;
 
         final var expectedAction = repository.save(CategoryPersistence.from(Category.newCategory(
             "Action Name",
@@ -171,7 +171,7 @@ public class MySQLCategoryGatewayImplTests extends IntegrationTest {
         assertThat(actual.getItems().get(0).getId()).isEqualTo(expectedAction.getId());
         assertThat(actual.getCurrentPage()).isEqualTo(expectedPage);
         assertThat(actual.getPerPage()).isEqualTo(expectedPerPage);
-        assertThat(actual.getTotal()).isEqualTo(expectedPagesCount);
+        assertThat(actual.getTotal()).isEqualTo(expectedElementsCount);
     }
 
     @Test

@@ -120,7 +120,7 @@ public class CategoryEndpointTests extends UnitTest {
         final var expectedDefaultPerPage = 15;
         final var expectedDefaultSort = "name";
         final var expectedDefaultDir = "asc";
-        final var expectedPagesCount = 1;
+        final var expectedElementsCount = 2;
 
         final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(Category.newCategory(
             "Action",
@@ -145,7 +145,7 @@ public class CategoryEndpointTests extends UnitTest {
         final var page = Pagination.<CategoryOutputData>builder()
             .currentPage(expectedDefaultPage)
             .perPage(expectedDefaultPerPage)
-            .total(1)
+            .total(expectedElementsCount)
             .items(List.of(expectecActionCategory, expectecHorrorCategory))
             .build();
 
@@ -159,7 +159,7 @@ public class CategoryEndpointTests extends UnitTest {
                .andExpect(jsonPath("$.items", hasSize(2)))
                .andExpect(jsonPath("$.current_page", equalTo(expectedDefaultPage)))
                .andExpect(jsonPath("$.per_page", equalTo(expectedDefaultPerPage)))
-               .andExpect(jsonPath("$.total", equalTo(expectedPagesCount)));
+               .andExpect(jsonPath("$.total", equalTo(expectedElementsCount)));
     }
 
     @Test
@@ -169,7 +169,7 @@ public class CategoryEndpointTests extends UnitTest {
         final var expectedPerPage = 20;
         final var expectedSort = "description";
         final var expectedDir = "desc";
-        final var expectedPagesCount = 1;
+        final var expectedElementsCount = 1;
 
         final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(Category.newCategory(
             "Action",
@@ -210,7 +210,7 @@ public class CategoryEndpointTests extends UnitTest {
                .andExpect(jsonPath("$.items.[0].id", equalTo(expectecActionCategory.getId().toString())))
                .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
                .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
-               .andExpect(jsonPath("$.total", equalTo(expectedPagesCount)));
+               .andExpect(jsonPath("$.total", equalTo(expectedElementsCount)));
     }
 
     @Test

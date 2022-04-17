@@ -49,7 +49,7 @@ public class MySQLCategoryGateway implements ICategoryGateway {
         return Pagination.<Category>builder()
             .currentPage(queryResult.getNumber())
             .perPage(queryResult.getSize())
-            .total(queryResult.getTotalPages())
+            .total(queryResult.getTotalElements())
             .items(queryResult.map(CategoryPersistence::fromThis).toList())
             .build();
     }

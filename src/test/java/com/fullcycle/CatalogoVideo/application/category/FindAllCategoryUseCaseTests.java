@@ -43,12 +43,12 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
         final var expectedDefaultPerPage = 15;
         final var expectedDefaultSort = "name";
         final var expectedDefaultDir = "asc";
-        final var expectedPagesCount = 1;
+        final var expectedElementsCount = 1;
 
         final var pageResult = Pagination.<Category>builder()
             .currentPage(expectedDefaultPage)
             .perPage(expectedDefaultPerPage)
-            .total(expectedPagesCount)
+            .total(expectedElementsCount)
             .items(List.of(
                 Category.newCategory(
                     "Action",
@@ -85,7 +85,7 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
         assertThat(actualResult.getItems()).hasSize(3);
         assertThat(actualResult.getCurrentPage()).isEqualTo(expectedDefaultPage);
         assertThat(actualResult.getPerPage()).isEqualTo(expectedDefaultPerPage);
-        assertThat(actualResult.getTotal()).isEqualTo(expectedPagesCount);
+        assertThat(actualResult.getTotal()).isEqualTo(expectedElementsCount);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
         final var expectedPerPage = 20;
         final var expectedSort = "description";
         final var expectedDir = "desc";
-        final var expectedPagesCount = 1;
+        final var expectedElementsCount = 1;
 
         final FindAllInput expectedGatewayInput = ICategoryGateway.FindAllInput.builder()
             .search(expectedSearch)
@@ -108,7 +108,7 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
         final var pageResult = Pagination.<Category>builder()
             .currentPage(expectedPage)
             .perPage(expectedPerPage)
-            .total(expectedPagesCount)
+            .total(expectedElementsCount)
             .items(List.of())
             .build();
             
@@ -128,7 +128,7 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
         assertThat(actualResult.getItems()).hasSize(0);
         assertThat(actualResult.getCurrentPage()).isEqualTo(expectedPage);
         assertThat(actualResult.getPerPage()).isEqualTo(expectedPerPage);
-        assertThat(actualResult.getTotal()).isEqualTo(expectedPagesCount);
+        assertThat(actualResult.getTotal()).isEqualTo(expectedElementsCount);
         
         verify(gateway, times(1)).findAll(eq(expectedGatewayInput));
     }
