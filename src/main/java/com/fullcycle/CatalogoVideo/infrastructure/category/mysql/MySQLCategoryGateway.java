@@ -1,5 +1,6 @@
 package com.fullcycle.CatalogoVideo.infrastructure.category.mysql;
 
+import static com.fullcycle.CatalogoVideo.infrastructure.common.Specifications.like;
 import static org.springframework.data.jpa.domain.Specification.where;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.fullcycle.CatalogoVideo.domain.category.Category;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
+import com.fullcycle.CatalogoVideo.infrastructure.common.Specifications;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
@@ -28,15 +30,10 @@ public class MySQLCategoryGateway implements ICategoryGateway {
         Specification<CategoryPersistence> where = null;
 
         if (StringUtils.hasLength(input.search)) {
-            final var searchLike = "%" + input.search + "%";
-    
-            final Specification<CategoryPersistence> nameLike = 
-                (root, query, cb) -> cb.like(root.get("name"), searchLike);
-            
-            final Specification<CategoryPersistence> descriptionLike = 
-                (root, query, cb) -> cb.like(root.get("description"), searchLike);
-
-            where = where(nameLike.or(descriptionLike));
+            where = where(
+                Specifications.<CategoryPersistence>like("name", input.search)
+                    .or(like("description", input.search))
+            );
         }
 
         return repository.findAll(where)
