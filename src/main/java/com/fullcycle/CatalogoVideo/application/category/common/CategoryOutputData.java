@@ -7,9 +7,11 @@ import com.fullcycle.CatalogoVideo.domain.category.Category;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CategoryOutputData {
 
     private UUID id;
