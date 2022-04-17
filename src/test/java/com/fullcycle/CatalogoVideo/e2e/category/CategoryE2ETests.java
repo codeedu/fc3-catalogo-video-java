@@ -13,6 +13,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.UUID;
+
 import com.fullcycle.CatalogoVideo.Composer;
 import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
 import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryInputData;
@@ -134,6 +136,24 @@ public class CategoryE2ETests extends E2eTest {
   }
 
   @Test
+  public void testFindAllWithEmptyDatabase() throws Exception {
+    final var expectedDefaultPage = 0;
+    final var expectedDefaultPerPage = 15;
+    final var expectedElementsCount = 0;
+
+    mockMvc.perform(
+      get("/categories")
+        .contentType(APPLICATION_JSON))
+        .andExpect(status().isOk()
+    )
+      .andExpect(content().contentType(APPLICATION_JSON))
+      .andExpect(jsonPath("$.items", hasSize(0)))
+      .andExpect(jsonPath("$.current_page", is(expectedDefaultPage)))
+      .andExpect(jsonPath("$.per_page", is(expectedDefaultPerPage)))
+      .andExpect(jsonPath("$.total", is(expectedElementsCount)));
+  }
+
+  @Test
   public void testFindAllWithDefaultParameters() throws Exception {
     final var expectedDefaultPage = 0;
     final var expectedDefaultPerPage = 15;
@@ -209,5 +229,52 @@ public class CategoryE2ETests extends E2eTest {
       .andExpect(jsonPath("$.per_page", is(expectedDefaultPerPage)))
       .andExpect(jsonPath("$.total", is(expectedElementsCount)))
       .andExpect(jsonPath("$.items.[0].id", is(expectecSeriesCategory.getId().toString())));
+  }
+
+  @Test
+  public void testFindById() throws Exception {
+    final String expectedName = "Series";
+    final String expectedDescription = "The funniest series online";
+    final boolean expectedIsActive = true;
+
+    repository.save(CategoryPersistence.from(Composer.moviesCategory()));
+
+    final CategoryPersistence expectecSeriesCategory = 
+      repository.save(CategoryPersistence.from(Composer.seriesCategory()));
+    
+    assertEquals(2, repository.count());
+
+    mockMvc.perform(
+      get("/categories/" + expectecSeriesCategory.getId()
+    )
+      .contentType(APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(content().contentType(APPLICATION_JSON))
+      .andExpect(jsonPath("$.id", is(expectecSeriesCategory.getId().toString())))
+      .andExpect(jsonPath("$.name", is(expectedName)))
+      .andExpect(jsonPath("$.description", is(expectedDescription)))
+      .andExpect(jsonPath("$.is_active", is(expectedIsActive))); 
+
+    assertEquals(2, repository.count());
+  }
+
+  @Test
+  public void testFindByIdWithUnknownID() throws Exception {
+    final String id = UUID.randomUUID().toString();
+    final String expectedErrorMessage = String.format("Category %s not found", id);
+
+    repository.save(CategoryPersistence.from(Composer.moviesCategory()));
+
+    assertEquals(1, repository.count());
+
+    mockMvc.perform(
+      get("/categories/" + id
+    )
+      .contentType(APPLICATION_JSON))
+      .andExpect(status().isNotFound())
+      .andExpect(content().contentType(APPLICATION_JSON))
+      .andExpect(jsonPath("$.message", is(expectedErrorMessage)));
+
+    assertEquals(1, repository.count());
   }
 }
