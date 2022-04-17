@@ -1,6 +1,5 @@
 package com.fullcycle.CatalogoVideo.api.category;
 
-import java.util.List;
 import java.util.UUID;
 
 import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
@@ -11,6 +10,7 @@ import com.fullcycle.CatalogoVideo.application.category.findall.IFindAllCategory
 import com.fullcycle.CatalogoVideo.application.category.get.IFindByIdCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.category.update.IUpdateCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.category.update.UpdateCategoryInputData;
+import com.fullcycle.CatalogoVideo.domain.common.Pagination;
 
 import org.springframework.stereotype.Component;
 
@@ -33,7 +33,7 @@ public class CategoryEndpoint implements ICategoryEndpoint {
     }
 
     @Override
-    public List<CategoryOutputData> findAll(
+    public Pagination<CategoryOutputData> findAll(
         final String search,
         final int page,
         final int perPage,

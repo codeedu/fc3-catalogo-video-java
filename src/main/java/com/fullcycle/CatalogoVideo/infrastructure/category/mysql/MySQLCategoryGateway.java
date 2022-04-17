@@ -3,15 +3,17 @@ package com.fullcycle.CatalogoVideo.infrastructure.category.mysql;
 import static com.fullcycle.CatalogoVideo.infrastructure.common.Specifications.like;
 import static org.springframework.data.jpa.domain.Specification.where;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.fullcycle.CatalogoVideo.domain.category.Category;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
+import com.fullcycle.CatalogoVideo.domain.common.Pagination;
 import com.fullcycle.CatalogoVideo.infrastructure.common.Specifications;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +28,7 @@ public class MySQLCategoryGateway implements ICategoryGateway {
     private final CategoryRepository repository;
 
     @Override
-    public List<Category> findAll(final FindAllInput input) {
+    public Pagination<Category> findAll(final FindAllInput input) {
         Specification<CategoryPersistence> where = null;
 
         if (StringUtils.hasLength(input.search)) {
@@ -36,10 +38,20 @@ public class MySQLCategoryGateway implements ICategoryGateway {
             );
         }
 
-        return repository.findAll(where)
-                         .stream()
-                         .map(CategoryPersistence::fromThis)
-                         .collect(Collectors.toList());
+        final PageRequest page = PageRequest.of(
+            input.page,
+            input.perPage,
+            Sort.by(Direction.fromString(input.direction), input.sort)
+        );
+
+        final var queryResult = repository.findAll(where, page);
+
+        return Pagination.<Category>builder()
+            .currentPage(queryResult.getNumber())
+            .perPage(queryResult.getSize())
+            .total(queryResult.getTotalPages())
+            .items(queryResult.map(CategoryPersistence::fromThis).toList())
+            .build();
     }
 
     @Override

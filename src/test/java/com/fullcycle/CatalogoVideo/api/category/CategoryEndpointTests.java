@@ -1,5 +1,6 @@
 package com.fullcycle.CatalogoVideo.api.category;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -29,9 +30,9 @@ import com.fullcycle.CatalogoVideo.application.category.get.IFindByIdCategoryUse
 import com.fullcycle.CatalogoVideo.application.category.update.IUpdateCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.category.update.UpdateCategoryInputData;
 import com.fullcycle.CatalogoVideo.domain.category.Category;
+import com.fullcycle.CatalogoVideo.domain.common.Pagination;
 import com.fullcycle.CatalogoVideo.runners.UnitTest;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -119,6 +120,7 @@ public class CategoryEndpointTests extends UnitTest {
         final var expectedDefaultPerPage = 15;
         final var expectedDefaultSort = "name";
         final var expectedDefaultDir = "asc";
+        final var expectedPagesCount = 1;
 
         final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(Category.newCategory(
             "Action",
@@ -140,14 +142,24 @@ public class CategoryEndpointTests extends UnitTest {
             .direction(expectedDefaultDir)
             .build();
 
-        doReturn(List.of(expectecActionCategory, expectecHorrorCategory))
+        final var page = Pagination.<CategoryOutputData>builder()
+            .currentPage(expectedDefaultPage)
+            .perPage(expectedDefaultPerPage)
+            .total(1)
+            .items(List.of(expectecActionCategory, expectecHorrorCategory))
+            .build();
+
+        doReturn(page)
             .when(findAllUseCase).execute(eq(useCaseInput));
 
         mockMvc.perform(get("/categories")
                .contentType(APPLICATION_JSON))
                .andExpect(status().isOk())
                .andExpect(content().contentType(APPLICATION_JSON))
-               .andExpect(jsonPath("$", hasSize(2)));
+               .andExpect(jsonPath("$.items", hasSize(2)))
+               .andExpect(jsonPath("$.current_page", equalTo(expectedDefaultPage)))
+               .andExpect(jsonPath("$.per_page", equalTo(expectedDefaultPerPage)))
+               .andExpect(jsonPath("$.total", equalTo(expectedPagesCount)));
     }
 
     @Test
@@ -157,6 +169,7 @@ public class CategoryEndpointTests extends UnitTest {
         final var expectedPerPage = 20;
         final var expectedSort = "description";
         final var expectedDir = "desc";
+        final var expectedPagesCount = 1;
 
         final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(Category.newCategory(
             "Action",
@@ -172,7 +185,14 @@ public class CategoryEndpointTests extends UnitTest {
             .direction(expectedDir)
             .build();
 
-        doReturn(List.of(expectecActionCategory))
+        final var page = Pagination.<CategoryOutputData>builder()
+            .currentPage(expectedPage)
+            .perPage(expectedPerPage)
+            .total(1)
+            .items(List.of(expectecActionCategory))
+            .build();
+
+        doReturn(page)
             .when(findAllUseCase).execute(eq(useCaseInput));
 
         mockMvc.perform(
@@ -186,8 +206,11 @@ public class CategoryEndpointTests extends UnitTest {
                 )
                .andExpect(status().isOk())
                .andExpect(content().contentType(APPLICATION_JSON))
-               .andExpect(jsonPath("$", hasSize(1)))
-               .andExpect(jsonPath("$.[0].id", Matchers.equalTo(expectecActionCategory.getId().toString())));
+               .andExpect(jsonPath("$.items", hasSize(1)))
+               .andExpect(jsonPath("$.items.[0].id", equalTo(expectecActionCategory.getId().toString())))
+               .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
+               .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
+               .andExpect(jsonPath("$.total", equalTo(expectedPagesCount)));
     }
 
     @Test

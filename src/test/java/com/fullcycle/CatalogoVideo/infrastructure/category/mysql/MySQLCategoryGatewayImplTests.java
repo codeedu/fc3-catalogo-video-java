@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.fullcycle.CatalogoVideo.domain.category.Category;
@@ -62,6 +61,11 @@ public class MySQLCategoryGatewayImplTests extends IntegrationTest {
 
     @Test
     public void findAllCategories() {
+        final var expectedItemSize = 2;
+        final var expectedPage = 0;
+        final var expectedPerPage = 15;
+        final var expectedPagesCount = 1;
+
         repository.save(CategoryPersistence.from(Category.newCategory(
             "Action",
             "Action Description",
@@ -76,17 +80,29 @@ public class MySQLCategoryGatewayImplTests extends IntegrationTest {
 
         assertEquals(repository.count(), 2);
 
-        final FindAllInput findAllInput = ICategoryGateway.FindAllInput.builder()
+        final var findAllInput = ICategoryGateway.FindAllInput.builder()
+            .page(expectedPage)
+            .perPage(expectedPerPage)
+            .sort("name")
+            .direction("asc")
             .build();
 
-        final List<Category> actual = gateway.findAll(findAllInput);
+        final var actual = gateway.findAll(findAllInput);
 
         assertThat(actual).isNotNull();
-        assertThat(actual).hasSize(2);
+        assertThat(actual.getItems()).hasSize(expectedItemSize);
+        assertThat(actual.getCurrentPage()).isEqualTo(expectedPage);
+        assertThat(actual.getPerPage()).isEqualTo(expectedPerPage);
+        assertThat(actual.getTotal()).isEqualTo(expectedPagesCount);
     }
 
     @Test
     public void givenNamAsSearch_whenMatchesWithActionName_shouldReturnActionCategory() {
+        final var expectedItemSize = 1;
+        final var expectedPage = 0;
+        final var expectedPerPage = 15;
+        final var expectedPagesCount = 1;
+
         final var expectedAction = repository.save(CategoryPersistence.from(Category.newCategory(
             "Action Name",
             "Action Description",
@@ -103,17 +119,29 @@ public class MySQLCategoryGatewayImplTests extends IntegrationTest {
 
         final FindAllInput findAllInput = ICategoryGateway.FindAllInput.builder()
             .search("nam")
+            .page(expectedPage)
+            .perPage(expectedPerPage)
+            .sort("name")
+            .direction("asc")
             .build();
 
-        final List<Category> actual = gateway.findAll(findAllInput);
+        final var actual = gateway.findAll(findAllInput);
 
         assertThat(actual).isNotNull();
-        assertThat(actual).hasSize(1);
-        assertThat(actual.get(0).getId()).isEqualTo(expectedAction.getId());
+        assertThat(actual.getItems()).hasSize(expectedItemSize);
+        assertThat(actual.getItems().get(0).getId()).isEqualTo(expectedAction.getId());
+        assertThat(actual.getCurrentPage()).isEqualTo(expectedPage);
+        assertThat(actual.getPerPage()).isEqualTo(expectedPerPage);
+        assertThat(actual.getTotal()).isEqualTo(expectedPagesCount);
     }
 
     @Test
     public void givenDescriptionAsSearch_whenMatchesWithActionDescription_shouldReturnActionCategory() {
+        final var expectedItemSize = 1;
+        final var expectedPage = 0;
+        final var expectedPerPage = 15;
+        final var expectedPagesCount = 1;
+
         final var expectedAction = repository.save(CategoryPersistence.from(Category.newCategory(
             "Action Name",
             "Action Description",
@@ -130,13 +158,20 @@ public class MySQLCategoryGatewayImplTests extends IntegrationTest {
 
         final FindAllInput findAllInput = ICategoryGateway.FindAllInput.builder()
             .search("desc")
+            .page(expectedPage)
+            .perPage(expectedPerPage)
+            .sort("name")
+            .direction("asc")
             .build();
 
-        final List<Category> actual = gateway.findAll(findAllInput);
+        final var actual = gateway.findAll(findAllInput);
 
         assertThat(actual).isNotNull();
-        assertThat(actual).hasSize(1);
-        assertThat(actual.get(0).getId()).isEqualTo(expectedAction.getId());
+        assertThat(actual.getItems()).hasSize(expectedItemSize);
+        assertThat(actual.getItems().get(0).getId()).isEqualTo(expectedAction.getId());
+        assertThat(actual.getCurrentPage()).isEqualTo(expectedPage);
+        assertThat(actual.getPerPage()).isEqualTo(expectedPerPage);
+        assertThat(actual.getTotal()).isEqualTo(expectedPagesCount);
     }
 
     @Test

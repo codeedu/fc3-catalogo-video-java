@@ -1,17 +1,17 @@
 package com.fullcycle.CatalogoVideo.domain.category.gateways;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.fullcycle.CatalogoVideo.domain.category.Category;
+import com.fullcycle.CatalogoVideo.domain.common.Pagination;
 
 import lombok.Builder;
 import lombok.Value;
 
 public interface ICategoryGateway {
     
-    List<Category> findAll(FindAllInput input);
+    Pagination<Category> findAll(FindAllInput input);
     Category create(Category category);
     Optional<Category> findById(UUID id);
     void remove(UUID id);

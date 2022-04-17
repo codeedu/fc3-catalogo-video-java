@@ -1,15 +1,14 @@
 package com.fullcycle.CatalogoVideo.application.category.findall;
 
-import java.util.List;
-
 import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
+import com.fullcycle.CatalogoVideo.domain.common.Pagination;
 
 import lombok.Builder;
 import lombok.Value;
 
 public interface IFindAllCategoryUseCase {
     
-    List<CategoryOutputData> execute(Input input);
+    Pagination<CategoryOutputData> execute(Input input);
 
     @Builder
     @Value

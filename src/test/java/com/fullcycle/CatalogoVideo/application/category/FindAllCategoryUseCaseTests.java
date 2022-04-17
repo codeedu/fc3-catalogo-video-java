@@ -6,16 +6,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.List;
 
-import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
 import com.fullcycle.CatalogoVideo.application.category.findall.FindAllCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.category.findall.IFindAllCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.category.findall.IFindAllCategoryUseCase.Input;
 import com.fullcycle.CatalogoVideo.domain.category.Category;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
 import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway.FindAllInput;
+import com.fullcycle.CatalogoVideo.domain.common.Pagination;
 import com.fullcycle.CatalogoVideo.runners.UnitTest;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -30,11 +29,11 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
     private FindAllCategoryUseCase useCase; 
 
     @Mock
-    private ICategoryGateway repository;
+    private ICategoryGateway gateway;
 
     @BeforeEach
     void initUseCase() {
-        Mockito.reset(repository);
+        Mockito.reset(gateway);
     }
 
     @Test
@@ -44,24 +43,30 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
         final var expectedDefaultPerPage = 15;
         final var expectedDefaultSort = "name";
         final var expectedDefaultDir = "asc";
+        final var expectedPagesCount = 1;
 
-        List<Category> categories = Arrays.asList(
-            Category.newCategory(
-                "Action",
-                "Action Description",
-                true
-            ),
-            Category.newCategory(
-                "Horror",
-                "Horror Description",
-                true
-            ),
-            Category.newCategory(
-                "Suspense",
-                "Suspense Description",
-                true
-            )
-        );
+        final var pageResult = Pagination.<Category>builder()
+            .currentPage(expectedDefaultPage)
+            .perPage(expectedDefaultPerPage)
+            .total(expectedPagesCount)
+            .items(List.of(
+                Category.newCategory(
+                    "Action",
+                    "Action Description",
+                    true
+                ),
+                Category.newCategory(
+                    "Horror",
+                    "Horror Description",
+                    true
+                ),
+                Category.newCategory(
+                    "Suspense",
+                    "Suspense Description",
+                    true
+                )
+            ))
+            .build();
 
         final FindAllInput expectedGatewayInput = ICategoryGateway.FindAllInput.builder()
             .search(expectedDefaultSearch)
@@ -71,12 +76,16 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
             .direction(expectedDefaultDir)
             .build();
 
-        when(repository.findAll(expectedGatewayInput)).thenReturn(categories);
+        when(gateway.findAll(expectedGatewayInput))
+            .thenReturn(pageResult);
 
-        useCase.execute(IFindAllCategoryUseCase.Input.builder().build());
+        final var actualResult = useCase.execute(IFindAllCategoryUseCase.Input.builder().build());
         
-        assertThat(categories).isNotNull();
-        assertThat(categories).hasSize(3);
+        assertThat(actualResult).isNotNull();
+        assertThat(actualResult.getItems()).hasSize(3);
+        assertThat(actualResult.getCurrentPage()).isEqualTo(expectedDefaultPage);
+        assertThat(actualResult.getPerPage()).isEqualTo(expectedDefaultPerPage);
+        assertThat(actualResult.getTotal()).isEqualTo(expectedPagesCount);
     }
 
     @Test
@@ -86,6 +95,7 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
         final var expectedPerPage = 20;
         final var expectedSort = "description";
         final var expectedDir = "desc";
+        final var expectedPagesCount = 1;
 
         final FindAllInput expectedGatewayInput = ICategoryGateway.FindAllInput.builder()
             .search(expectedSearch)
@@ -95,7 +105,14 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
             .direction(expectedDir)
             .build();
 
-        when(repository.findAll(eq(expectedGatewayInput))).thenReturn(List.of());
+        final var pageResult = Pagination.<Category>builder()
+            .currentPage(expectedPage)
+            .perPage(expectedPerPage)
+            .total(expectedPagesCount)
+            .items(List.of())
+            .build();
+            
+        when(gateway.findAll(eq(expectedGatewayInput))).thenReturn(pageResult);
 
         final Input useCaseInput = IFindAllCategoryUseCase.Input.builder()
             .search(expectedSearch)
@@ -105,11 +122,14 @@ public class FindAllCategoryUseCaseTests extends UnitTest {
             .direction(expectedDir)
             .build();
         
-        final List<CategoryOutputData> actual = useCase.execute(useCaseInput);
+        final var actualResult = useCase.execute(useCaseInput);
         
-        assertThat(actual).isNotNull();
-        assertThat(actual).hasSize(0);
+        assertThat(actualResult).isNotNull();
+        assertThat(actualResult.getItems()).hasSize(0);
+        assertThat(actualResult.getCurrentPage()).isEqualTo(expectedPage);
+        assertThat(actualResult.getPerPage()).isEqualTo(expectedPerPage);
+        assertThat(actualResult.getTotal()).isEqualTo(expectedPagesCount);
         
-        verify(repository, times(1)).findAll(eq(expectedGatewayInput));
+        verify(gateway, times(1)).findAll(eq(expectedGatewayInput));
     }
 }
