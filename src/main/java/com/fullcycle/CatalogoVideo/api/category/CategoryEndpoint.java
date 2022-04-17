@@ -33,10 +33,20 @@ public class CategoryEndpoint implements ICategoryEndpoint {
     }
 
     @Override
-    public List<CategoryOutputData> findAll(final String search) {
+    public List<CategoryOutputData> findAll(
+        final String search,
+        final int page,
+        final int perPage,
+        final String sort,
+        final String dir
+    ) {
         return findAllUseCase.execute(
             IFindAllCategoryUseCase.Input.builder()
                 .search(search)
+                .page(page)
+                .perPage(perPage)
+                .sort(sort)
+                .direction(dir)
                 .build()
         );
     }

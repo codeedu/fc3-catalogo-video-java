@@ -113,7 +113,13 @@ public class CategoryEndpointTests extends UnitTest {
     }
 
     @Test
-    public void findAllCategories() throws Exception {
+    public void findAllCategoriesWithDefaultParams() throws Exception {
+        final var expectedDefaultSearch = "";
+        final var expectedDefaultPage = 0;
+        final var expectedDefaultPerPage = 15;
+        final var expectedDefaultSort = "name";
+        final var expectedDefaultDir = "asc";
+
         final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(Category.newCategory(
             "Action",
             "The most watched category",
@@ -127,7 +133,11 @@ public class CategoryEndpointTests extends UnitTest {
         ));  
         
         final IFindAllCategoryUseCase.Input useCaseInput = IFindAllCategoryUseCase.Input.builder()
-            .search("")
+            .search(expectedDefaultSearch)
+            .page(expectedDefaultPage)
+            .perPage(expectedDefaultPerPage)
+            .sort(expectedDefaultSort)
+            .direction(expectedDefaultDir)
             .build();
 
         doReturn(List.of(expectecActionCategory, expectecHorrorCategory))
@@ -141,8 +151,12 @@ public class CategoryEndpointTests extends UnitTest {
     }
 
     @Test
-    public void findAllCategoriesBySearchAct() throws Exception {
-        final String expectedSearch = "act";
+    public void findAllCategoriesWithFulfilledParams() throws Exception {
+        final var expectedSearch = "act";
+        final var expectedPage = 2;
+        final var expectedPerPage = 20;
+        final var expectedSort = "description";
+        final var expectedDir = "desc";
 
         final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(Category.newCategory(
             "Action",
@@ -152,6 +166,10 @@ public class CategoryEndpointTests extends UnitTest {
         
         final IFindAllCategoryUseCase.Input useCaseInput = IFindAllCategoryUseCase.Input.builder()
             .search(expectedSearch)
+            .page(expectedPage)
+            .perPage(expectedPerPage)
+            .sort(expectedSort)
+            .direction(expectedDir)
             .build();
 
         doReturn(List.of(expectecActionCategory))
@@ -160,6 +178,10 @@ public class CategoryEndpointTests extends UnitTest {
         mockMvc.perform(
                     get("/categories")
                         .queryParam("search", expectedSearch)
+                        .queryParam("page", String.valueOf(expectedPage))
+                        .queryParam("perPage", String.valueOf(expectedPerPage))
+                        .queryParam("sort", expectedSort)
+                        .queryParam("dir", expectedDir)
                         .contentType(APPLICATION_JSON)
                 )
                .andExpect(status().isOk())
