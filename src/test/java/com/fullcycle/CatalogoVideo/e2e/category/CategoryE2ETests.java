@@ -4,11 +4,13 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,6 +20,7 @@ import java.util.UUID;
 import com.fullcycle.CatalogoVideo.Composer;
 import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
 import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryInputData;
+import com.fullcycle.CatalogoVideo.application.category.update.UpdateCategoryInputData;
 import com.fullcycle.CatalogoVideo.domain.category.Category;
 import com.fullcycle.CatalogoVideo.infrastructure.category.mysql.CategoryPersistence;
 import com.fullcycle.CatalogoVideo.infrastructure.category.mysql.CategoryRepository;
@@ -276,5 +279,114 @@ public class CategoryE2ETests extends E2eTest {
       .andExpect(jsonPath("$.message", is(expectedErrorMessage)));
 
     assertEquals(1, repository.count());
+  }
+
+  @Test
+  public void testUpdateCategoryNameAndDescription() throws Exception {
+    final String expectedName = "Movies";
+    final String expectedDescription = "The nicests movies ever";
+    final boolean expectedIsActive = true;
+
+    final CategoryPersistence expectecSeriesCategory = 
+      repository.save(CategoryPersistence.from(Composer.seriesCategory()));
+    
+    assertEquals(1, repository.count());
+
+    final UpdateCategoryInputData input = new UpdateCategoryInputData();
+    input.setName(expectedName);   
+    input.setDescription(expectedDescription);
+    input.setIsActive(expectedIsActive);     
+
+    mockMvc.perform(
+      put("/categories/" + expectecSeriesCategory.getId())
+        .contentType(APPLICATION_JSON)
+        .content(writeValueAsString(input))
+    )
+      .andExpect(status().isNoContent());
+    
+    final var actualPersisted = 
+      repository.findById(expectecSeriesCategory.getId()).get();
+    
+    assertEquals(expectedName, actualPersisted.getName());
+    assertEquals(expectedDescription, actualPersisted.getDescription());
+    assertEquals(expectedIsActive, actualPersisted.getIsActive());
+    assertEquals(expectecSeriesCategory.getCreatedAt().withNano(0), actualPersisted.getCreatedAt().withNano(0));
+    assertNotEquals(expectecSeriesCategory.getUpdatedAt(), actualPersisted.getUpdatedAt());
+    assertNull(actualPersisted.getDeletedAt());
+  }
+
+  @Test
+  public void testUpdateCategoryToInactive() throws Exception {
+    final String expectedName = "Series";
+    final String expectedDescription = "The funniest series online";
+    final boolean expectedIsActive = false;
+
+    final CategoryPersistence expectecSeriesCategory = 
+      repository.save(CategoryPersistence.from(Composer.seriesCategory()));
+    
+    assertEquals(1, repository.count());
+    assertEquals(true, expectecSeriesCategory.getIsActive());
+    assertNull(expectecSeriesCategory.getDeletedAt());
+
+    final UpdateCategoryInputData input = new UpdateCategoryInputData();
+    input.setName(expectedName);   
+    input.setDescription(expectedDescription);
+    input.setIsActive(expectedIsActive);     
+
+    mockMvc.perform(
+      put("/categories/" + expectecSeriesCategory.getId())
+        .contentType(APPLICATION_JSON)
+        .content(writeValueAsString(input))
+    )
+      .andExpect(status().isNoContent());
+    
+    final var actualPersisted = 
+      repository.findById(expectecSeriesCategory.getId()).get();
+    
+    assertEquals(expectedName, actualPersisted.getName());
+    assertEquals(expectedDescription, actualPersisted.getDescription());
+    assertEquals(expectedIsActive, actualPersisted.getIsActive());
+    assertEquals(expectecSeriesCategory.getCreatedAt().withNano(0), actualPersisted.getCreatedAt().withNano(0));
+    assertNotEquals(expectecSeriesCategory.getUpdatedAt(), actualPersisted.getUpdatedAt());
+    assertNotNull(actualPersisted.getDeletedAt());
+  }
+
+  @Test
+  public void testUpdateCategoryToActive() throws Exception {
+    final String expectedName = "Series";
+    final String expectedDescription = "The funniest series online";
+    final boolean expectedIsActive = true;
+
+    final var series = Composer.seriesCategory();
+    series.deactivate();
+
+    final CategoryPersistence expectecSeriesCategory = 
+      repository.save(CategoryPersistence.from(series));
+    
+    assertEquals(1, repository.count());
+    assertEquals(false, expectecSeriesCategory.getIsActive());
+    assertNotNull(expectecSeriesCategory.getDeletedAt());
+
+    final UpdateCategoryInputData input = new UpdateCategoryInputData();
+    input.setName(expectedName);
+    input.setDescription(expectedDescription);
+    input.setIsActive(expectedIsActive);     
+
+    mockMvc.perform(
+      put("/categories/" + expectecSeriesCategory.getId())
+        .contentType(APPLICATION_JSON)
+        .content(writeValueAsString(input))
+    )
+      .andExpect(status().isNoContent());
+    
+    final var actualPersisted = 
+      repository.findById(expectecSeriesCategory.getId()).get();
+    
+    assertEquals(expectedName, actualPersisted.getName());
+    assertEquals(expectedDescription, actualPersisted.getDescription());
+    assertEquals(expectedIsActive, actualPersisted.getIsActive());
+    assertEquals(expectecSeriesCategory.getCreatedAt().withNano(0), actualPersisted.getCreatedAt().withNano(0));
+    assertNotEquals(expectecSeriesCategory.getUpdatedAt(), actualPersisted.getUpdatedAt());
+    assertNull(actualPersisted.getDeletedAt());
   }
 }
