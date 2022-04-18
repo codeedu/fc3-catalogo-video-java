@@ -56,27 +56,27 @@ public class MySQLCategoryGateway implements ICategoryGateway {
 
     @Override
     @Transactional
-    public Category create(Category category) {
-        final CategoryPersistence entity = CategoryPersistence.from(category);
-        return repository.save(entity)
-                         .fromThis();
+    public Category create(final Category category) {
+        return repository.save(CategoryPersistence.from(category)).fromThis();
     }
 
     @Override
-    public Optional<Category> findById(UUID id) {
+    public Optional<Category> findById(final UUID id) {
         return repository.findById(id)
-                         .map(CategoryPersistence::fromThis);
+            .map(CategoryPersistence::fromThis);
     }
 
     @Override
     @Transactional
-    public void remove(UUID id) {
-        repository.deleteById(id);
+    public void remove(final UUID id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        }
     }
 
     @Override
     @Transactional
-    public void update(Category category) {
+    public void update(final Category category) {
         repository.saveAndFlush(CategoryPersistence.from(category));
     }
 }

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -388,5 +389,34 @@ public class CategoryE2ETests extends E2eTest {
     assertEquals(expectecSeriesCategory.getCreatedAt().withNano(0), actualPersisted.getCreatedAt().withNano(0));
     assertNotEquals(expectecSeriesCategory.getUpdatedAt(), actualPersisted.getUpdatedAt());
     assertNull(actualPersisted.getDeletedAt());
+  }
+
+  @Test
+  public void testDeleteById() throws Exception {
+    final CategoryPersistence expectecSeriesCategory = 
+      repository.save(CategoryPersistence.from(Composer.seriesCategory()));
+    
+    assertEquals(1, repository.count());
+
+    mockMvc.perform(
+      delete("/categories/" + expectecSeriesCategory.getId())
+    )
+      .andExpect(status().isNoContent());
+    
+    assertEquals(0, repository.count());
+  }
+
+  @Test
+  public void testDeleteByUnknownId() throws Exception {
+    repository.save(CategoryPersistence.from(Composer.seriesCategory()));
+    
+    assertEquals(1, repository.count());
+
+    mockMvc.perform(
+      delete("/categories/" + UUID.randomUUID().toString())
+    )
+      .andExpect(status().isNoContent());
+    
+    assertEquals(1, repository.count());
   }
 }
