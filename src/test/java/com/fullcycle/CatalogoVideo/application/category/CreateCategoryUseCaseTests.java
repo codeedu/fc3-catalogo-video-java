@@ -1,104 +1,99 @@
 package com.fullcycle.CatalogoVideo.application.category;
 
-import com.fullcycle.CatalogoVideo.application.usecase.category.common.CategoryOutputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.create.CreateCategoryInputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.create.CreateCategoryUseCase;
-import com.fullcycle.CatalogoVideo.domain.entity.Category;
-import com.fullcycle.CatalogoVideo.domain.repository.ICategoryRepository;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
+import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryInputData;
+import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryUseCase;
+import com.fullcycle.CatalogoVideo.domain.category.Category;
+import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
+import com.fullcycle.CatalogoVideo.runners.UnitTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.Mockito;
 
-@ExtendWith(SpringExtension.class)
-public class CreateCategoryUseCaseTests {
+public class CreateCategoryUseCaseTests extends UnitTest {
     
     @InjectMocks
     private CreateCategoryUseCase useCase; 
 
     @Mock
-    ICategoryRepository repository;
-
+    private ICategoryGateway gateway;
 
     @BeforeEach
     void initUseCase() {
-        useCase = new CreateCategoryUseCase(repository);
+        Mockito.reset(gateway);
     }
 
     @Test
-    public void executeReturnsCreatedCategory() {
-        Category category = new Category(
-            "Action", 
-            "Action Category"  
+    public void givenValidInput_whenSuccessfullyCreateCategory_shouldReturnOutputFulfilled() {
+        final CreateCategoryInputData input = new CreateCategoryInputData(
+            "Action",
+            "The most watched category",
+            true
         );
 
-        when(repository.create(any(Category.class)))
-            .thenReturn(category);
-        
-        CreateCategoryInputData input = new CreateCategoryInputData(
-            category.getName(),
-            category.getDescription(),
-            category.getIsActive()
-        );
-        CategoryOutputData actual = useCase.execute(input);
-        repository.create(category);
+        when(gateway.create(any(Category.class)))
+            .thenReturn(input.toDomain());
 
-        assertThat(actual.getName()).isEqualTo(category.getName());
+        final CategoryOutputData actual = useCase.execute(input);
+
+        assertThat(actual.getName()).isEqualTo(input.getName());
+        assertThat(actual.getDescription()).isEqualTo(input.getDescription());
         assertTrue(actual.getIsActive());
+        assertNotNull(actual.getCreatedAt());
+        assertNotNull(actual.getUpdatedAt());
+        assertNull(actual.getDeletedAt());
     }  
     
     @Test
-    public void executeReturnsCreatedCategoryWithName() {
-        Category category = new Category(
-            "Action"
+    public void givenValidInputWithoutDescription_whenSuccessfullyCreateCategory_shouldReturnOutputFulfilled() {
+        final CreateCategoryInputData input = new CreateCategoryInputData(
+            "Action",
+            null,
+            true
         );
 
-        when(repository.create(any(Category.class)))
-            .thenReturn(category);
+        when(gateway.create(any(Category.class)))
+            .thenReturn(input.toDomain());
         
-        CreateCategoryInputData input = new CreateCategoryInputData(
-            category.getName(),
-            category.getDescription(),
-            category.getIsActive()
-        );
-        CategoryOutputData actual = useCase.execute(input);
-        repository.create(category);
+        final CategoryOutputData actual = useCase.execute(input);
 
-        assertThat(actual.getName()).isEqualTo(category.getName());
+        assertThat(actual.getName()).isEqualTo(input.getName());
+        assertThat(actual.getDescription()).isNull();
         assertTrue(actual.getIsActive());
+        assertNotNull(actual.getCreatedAt());
+        assertNotNull(actual.getUpdatedAt());
+        assertNull(actual.getDeletedAt());
     } 
 
     @Test
-    public void executeReturnsCreatedCategoryWithIsActiveFalse() {
-        Category category = new Category(
+    public void givenValidInputInactivated_whenSuccessfullyCreateCategory_shouldReturnOutputFulfilled() {
+        final CreateCategoryInputData input = new CreateCategoryInputData(
             "Action",
-            "Description",
+            "The most watched category",
             false
         );
 
-        when(repository.create(any(Category.class)))
-            .thenReturn(category);
+        when(gateway.create(any(Category.class)))
+            .thenReturn(input.toDomain());
         
-        CreateCategoryInputData input = new CreateCategoryInputData(
-            category.getName(),
-            category.getDescription(),
-            category.getIsActive()
-        );
-        CategoryOutputData actual = useCase.execute(input);
-        repository.create(category);
+        final CategoryOutputData actual = useCase.execute(input);
 
-        assertThat(actual.getName()).isEqualTo(category.getName());
-        assertThat(actual.getDescription()).isEqualTo(category.getDescription());
+        assertThat(actual.getName()).isEqualTo(input.getName());
+        assertThat(actual.getDescription()).isEqualTo(input.getDescription());
         assertFalse(actual.getIsActive());
+        assertNotNull(actual.getCreatedAt());
+        assertNotNull(actual.getUpdatedAt());
+        assertNull(actual.getDeletedAt());
     }     
 }
-

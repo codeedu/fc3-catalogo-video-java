@@ -1,40 +1,37 @@
 package com.fullcycle.CatalogoVideo.application.category;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-
-import com.fullcycle.CatalogoVideo.application.usecase.category.delete.RemoveCategoryUseCase;
-import com.fullcycle.CatalogoVideo.domain.entity.Category;
-import com.fullcycle.CatalogoVideo.domain.repository.ICategoryRepository;
+import com.fullcycle.CatalogoVideo.application.category.delete.DeleteCategoryUseCase;
+import com.fullcycle.CatalogoVideo.domain.category.Category;
+import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
+import com.fullcycle.CatalogoVideo.runners.UnitTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.Mockito;
 
-@ExtendWith(SpringExtension.class)
-public class RemoveCategoryUseCaseTests {
+public class RemoveCategoryUseCaseTests extends UnitTest {
 
     @InjectMocks
-    private RemoveCategoryUseCase useCase; 
+    private DeleteCategoryUseCase useCase; 
 
     @Mock
-    ICategoryRepository repository;
-
+    private ICategoryGateway repository;
 
     @BeforeEach
     void initUseCase() {
-        useCase = new RemoveCategoryUseCase(repository);
+        Mockito.reset(repository);
     }
 
     @Test
     public void executeReturnsRemove() throws Exception {
-        Category category = new Category(
+        Category category = Category.newCategory(
             "Action",
             "Action Description",
             true

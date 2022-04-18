@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CatalogoVideoApplication {
 
 	public static void main(String[] args) {
+		System.setProperty("spring.profiles.default", "development");
 		SpringApplication.run(CatalogoVideoApplication.class, args);
 	}
-
 }

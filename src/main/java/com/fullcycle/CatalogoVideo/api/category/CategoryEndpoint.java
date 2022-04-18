@@ -1,16 +1,16 @@
 package com.fullcycle.CatalogoVideo.api.category;
 
-import java.util.List;
 import java.util.UUID;
 
-import com.fullcycle.CatalogoVideo.application.usecase.category.common.CategoryOutputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.create.CreateCategoryInputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.create.ICreateCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.delete.IRemoveCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.findall.IFindAllCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.get.IFindByIdCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.update.IUpdateCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.update.UpdateCategoryInputData;
+import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
+import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryInputData;
+import com.fullcycle.CatalogoVideo.application.category.create.ICreateCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.delete.IDeleteCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.findall.IFindAllCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.get.IFindByIdCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.update.IUpdateCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.update.UpdateCategoryInputData;
+import com.fullcycle.CatalogoVideo.domain.common.Pagination;
 
 import org.springframework.stereotype.Component;
 
@@ -23,7 +23,7 @@ public class CategoryEndpoint implements ICategoryEndpoint {
     private ICreateCategoryUseCase createUseCase;
     private IFindAllCategoryUseCase findAllUseCase;
     private IFindByIdCategoryUseCase findByIdUseCase;
-    private IRemoveCategoryUseCase removeUseCase;
+    private IDeleteCategoryUseCase removeUseCase;
     private IUpdateCategoryUseCase updateUseCase;
 
     @Override
@@ -33,8 +33,22 @@ public class CategoryEndpoint implements ICategoryEndpoint {
     }
 
     @Override
-    public List<CategoryOutputData> findAll() {
-        return findAllUseCase.execute();
+    public Pagination<CategoryOutputData> findAll(
+        final String search,
+        final int page,
+        final int perPage,
+        final String sort,
+        final String dir
+    ) {
+        return findAllUseCase.execute(
+            IFindAllCategoryUseCase.Input.builder()
+                .search(search)
+                .page(page)
+                .perPage(perPage)
+                .sort(sort)
+                .direction(dir)
+                .build()
+        );
     }
 
     @Override

@@ -1,51 +1,49 @@
 package com.fullcycle.CatalogoVideo.application.category;
 
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doNothing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import java.util.UUID;
 
+import com.fullcycle.CatalogoVideo.application.category.update.UpdateCategoryInputData;
+import com.fullcycle.CatalogoVideo.application.category.update.UpdateCategoryUseCase;
 import com.fullcycle.CatalogoVideo.application.exception.NotFoundException;
-import com.fullcycle.CatalogoVideo.application.usecase.category.update.UpdateCategoryInputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.update.UpdateCategoryUseCase;
-import com.fullcycle.CatalogoVideo.domain.entity.Category;
-import com.fullcycle.CatalogoVideo.domain.repository.ICategoryRepository;
+import com.fullcycle.CatalogoVideo.domain.category.Category;
+import com.fullcycle.CatalogoVideo.domain.category.gateways.ICategoryGateway;
+import com.fullcycle.CatalogoVideo.runners.UnitTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.Mockito;
 
-@ExtendWith(SpringExtension.class)
-public class UpdateCategoryUseCaseTests {
+public class UpdateCategoryUseCaseTests extends UnitTest {
 
     @InjectMocks
     private UpdateCategoryUseCase useCase; 
 
     @Mock
-    ICategoryRepository repository;
-
+    private ICategoryGateway repository;
 
     @BeforeEach
     void initUseCase() {
-        useCase = new UpdateCategoryUseCase(repository);
+        Mockito.reset(repository);
     }
 
     @Test
     public void executeReturnsUpdatedCategoryName() throws Exception {
-        Category category = new Category(
+        Category category = Category.newCategory(
             "Action",
             "Action Description",
             true
         );
 
-        Category expected = new Category(
+        Category expected = Category.newCategory(
             "Action 2",
             "Description",
             true
@@ -80,13 +78,13 @@ public class UpdateCategoryUseCaseTests {
 
     @Test
     public void executeReturnsUpdatedCategory() throws Exception {
-        Category category = new Category(
+        Category category = Category.newCategory(
             "Action",
             "Action Description",
             true
         );
 
-        Category expected = new Category(
+        Category expected = Category.newCategory(
             "Action 2",
             "Description 2",
             false
@@ -123,7 +121,7 @@ public class UpdateCategoryUseCaseTests {
 
     @Test
     public void throwNotFoundExceptionWhenIdIsWrong() {
-        Category category = new Category(
+        Category category = Category.newCategory(
             "Action",
             "Action Description",
             true

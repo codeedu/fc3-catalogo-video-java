@@ -1,53 +1,49 @@
 package com.fullcycle.CatalogoVideo.api.category;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fullcycle.CatalogoVideo.api.configuration.GlobalExceptionHandler;
-import com.fullcycle.CatalogoVideo.application.usecase.category.common.CategoryOutputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.create.CreateCategoryInputData;
-import com.fullcycle.CatalogoVideo.application.usecase.category.create.ICreateCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.delete.IRemoveCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.findall.IFindAllCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.get.IFindByIdCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.update.IUpdateCategoryUseCase;
-import com.fullcycle.CatalogoVideo.application.usecase.category.update.UpdateCategoryInputData;
-import com.fullcycle.CatalogoVideo.domain.entity.Category;
-import com.fullcycle.CatalogoVideo.domain.repository.ICategoryRepository;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.boot.test.json.JacksonTester;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.mockito.ArgumentMatchers.any;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.hasSize;
+import com.fullcycle.CatalogoVideo.api.configuration.GlobalExceptionHandler;
+import com.fullcycle.CatalogoVideo.api.configuration.ObjectMapperConfig;
+import com.fullcycle.CatalogoVideo.application.category.common.CategoryOutputData;
+import com.fullcycle.CatalogoVideo.application.category.create.CreateCategoryInputData;
+import com.fullcycle.CatalogoVideo.application.category.create.ICreateCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.delete.IDeleteCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.findall.IFindAllCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.get.IFindByIdCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.update.IUpdateCategoryUseCase;
+import com.fullcycle.CatalogoVideo.application.category.update.UpdateCategoryInputData;
+import com.fullcycle.CatalogoVideo.domain.category.Category;
+import com.fullcycle.CatalogoVideo.domain.common.Pagination;
+import com.fullcycle.CatalogoVideo.runners.UnitTest;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@ExtendWith(MockitoExtension.class)
-public class CategoryEndpointTests {
+public class CategoryEndpointTests extends UnitTest {
     
     private MockMvc mockMvc;
     private JacksonTester<CreateCategoryInputData> createJson;
@@ -66,154 +62,221 @@ public class CategoryEndpointTests {
     private IFindByIdCategoryUseCase findByIdUseCase;
 
     @Mock
-    private IRemoveCategoryUseCase removeUseCase;
+    private IDeleteCategoryUseCase removeUseCase;
 
     @Mock
     private IUpdateCategoryUseCase updateUseCase;
 
     @BeforeEach
     public void init() {
-        JacksonTester.initFields(this, new ObjectMapper());
+        JacksonTester.initFields(this, ObjectMapperConfig.getMapper());
         mockMvc = MockMvcBuilders
                     .standaloneSetup(endpoint)
                     .setControllerAdvice(new GlobalExceptionHandler())
+                    .setMessageConverters(new MappingJackson2HttpMessageConverter(
+                        ObjectMapperConfig.getMapper()
+                    ))
                     .build();
     }
 
     @Test
     public void createCategory() throws Exception {
-        CreateCategoryInputData input = new CreateCategoryInputData();
-        input.setName("Action");
+        final String expectedName = "Action";
+        final String expectedDescription = "The most watched category";
+        final boolean expectedIsActive = true;
 
-        String payload = createJson.write(input)
-                                   .getJson();
+        final CreateCategoryInputData input = new CreateCategoryInputData();
+        input.setName(expectedName);
+        input.setDescription(expectedDescription);
+        input.setIsActive(expectedIsActive);
 
-        Category entity = new Category(
-            "Action",
-            "",
-            true
-        );
-        CategoryOutputData output = new CategoryOutputData(
-            entity.getId(),
-            entity.getName(),
-            entity.getDescription(),
-            entity.getIsActive()
-        );
+        final String payload = createJson.write(input).getJson();
+
+        final CategoryOutputData output = CategoryOutputData.fromDomain(Category.newCategory(
+            expectedName,
+            expectedDescription,
+            expectedIsActive
+        ));
 
         doReturn(output)
-            .when(createUseCase)
-            .execute(any(CreateCategoryInputData.class));
+            .when(createUseCase).execute(eq(input));
 
         mockMvc.perform(post("/categories")
                .contentType(APPLICATION_JSON)
                .content(payload))
+               .andDo(MockMvcResultHandlers.log())
                .andExpect(status().isCreated())
                .andExpect(content().contentType(APPLICATION_JSON))
-               .andExpect(jsonPath("$.name", is("Action")));
+               .andExpect(jsonPath("$.id", is(notNullValue())))
+               .andExpect(jsonPath("$.name", is(expectedName)))
+               .andExpect(jsonPath("$.description", is(expectedDescription)))
+               .andExpect(jsonPath("$.is_active", is(expectedIsActive)));
     }
 
     @Test
-    public void findAllCategories() throws Exception {
-        Category entity1 = new Category(
-            "Action",
-            "",
-            true            
-        );
-        Category entity2 = new Category(
-            "Horror",
-            "",
-            true            
-        );     
-        CategoryOutputData output1 = new CategoryOutputData(
-            entity1.getId(),
-            entity1.getName(),
-            entity1.getDescription(),
-            entity1.getIsActive()
-        );
-        CategoryOutputData output2 = new CategoryOutputData(
-            entity2.getId(),
-            entity2.getName(),
-            entity2.getDescription(),
-            entity2.getIsActive()
-        );  
-        
-        List<CategoryOutputData> output = new ArrayList<CategoryOutputData>();
-        output.addAll(Arrays.asList(output1, output2));
+    public void findAllCategoriesWithDefaultParams() throws Exception {
+        final var expectedDefaultSearch = "";
+        final var expectedDefaultPage = 0;
+        final var expectedDefaultPerPage = 15;
+        final var expectedDefaultSort = "name";
+        final var expectedDefaultDir = "asc";
+        final var expectedElementsCount = 2;
 
-        doReturn(output)
-            .when(findAllUseCase)
-            .execute();
+        final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(Category.newCategory(
+            "Action",
+            "The most watched category",
+            true            
+        ));
+
+        final CategoryOutputData expectecHorrorCategory = CategoryOutputData.fromDomain(Category.newCategory(
+            "Horror",
+            "The second most watched category",
+            true
+        ));  
+        
+        final IFindAllCategoryUseCase.Input useCaseInput = IFindAllCategoryUseCase.Input.builder()
+            .search(expectedDefaultSearch)
+            .page(expectedDefaultPage)
+            .perPage(expectedDefaultPerPage)
+            .sort(expectedDefaultSort)
+            .direction(expectedDefaultDir)
+            .build();
+
+        final var page = Pagination.<CategoryOutputData>builder()
+            .currentPage(expectedDefaultPage)
+            .perPage(expectedDefaultPerPage)
+            .total(expectedElementsCount)
+            .items(List.of(expectecActionCategory, expectecHorrorCategory))
+            .build();
+
+        doReturn(page)
+            .when(findAllUseCase).execute(eq(useCaseInput));
 
         mockMvc.perform(get("/categories")
                .contentType(APPLICATION_JSON))
                .andExpect(status().isOk())
                .andExpect(content().contentType(APPLICATION_JSON))
-               .andExpect(jsonPath("$", hasSize(2)));
+               .andExpect(jsonPath("$.items", hasSize(2)))
+               .andExpect(jsonPath("$.current_page", equalTo(expectedDefaultPage)))
+               .andExpect(jsonPath("$.per_page", equalTo(expectedDefaultPerPage)))
+               .andExpect(jsonPath("$.total", equalTo(expectedElementsCount)));
+    }
+
+    @Test
+    public void findAllCategoriesWithFulfilledParams() throws Exception {
+        final var expectedSearch = "act";
+        final var expectedPage = 2;
+        final var expectedPerPage = 20;
+        final var expectedSort = "description";
+        final var expectedDir = "desc";
+        final var expectedElementsCount = 1;
+
+        final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(Category.newCategory(
+            "Action",
+            "The most watched category",
+            true            
+        ));
+        
+        final IFindAllCategoryUseCase.Input useCaseInput = IFindAllCategoryUseCase.Input.builder()
+            .search(expectedSearch)
+            .page(expectedPage)
+            .perPage(expectedPerPage)
+            .sort(expectedSort)
+            .direction(expectedDir)
+            .build();
+
+        final var page = Pagination.<CategoryOutputData>builder()
+            .currentPage(expectedPage)
+            .perPage(expectedPerPage)
+            .total(1)
+            .items(List.of(expectecActionCategory))
+            .build();
+
+        doReturn(page)
+            .when(findAllUseCase).execute(eq(useCaseInput));
+
+        mockMvc.perform(
+                    get("/categories")
+                        .queryParam("search", expectedSearch)
+                        .queryParam("page", String.valueOf(expectedPage))
+                        .queryParam("perPage", String.valueOf(expectedPerPage))
+                        .queryParam("sort", expectedSort)
+                        .queryParam("dir", expectedDir)
+                        .contentType(APPLICATION_JSON)
+                )
+               .andExpect(status().isOk())
+               .andExpect(content().contentType(APPLICATION_JSON))
+               .andExpect(jsonPath("$.items", hasSize(1)))
+               .andExpect(jsonPath("$.items.[0].id", equalTo(expectecActionCategory.getId().toString())))
+               .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
+               .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
+               .andExpect(jsonPath("$.total", equalTo(expectedElementsCount)));
     }
 
     @Test
     public void findByIdCategory() throws Exception {
-        Category entity = new Category(
-            "Action",
-            "",
-            true            
-        );
-        CategoryOutputData output = new CategoryOutputData(
-            entity.getId(),
-            entity.getName(),
-            entity.getDescription(),
-            entity.getIsActive()
-        );
+        final String expectedName = "Action";
+        final String expectedDescription = "The most watched category";
+        final boolean expectedIsActive = true;
 
-        doReturn(output)
+        final CategoryOutputData expectecActionCategory = CategoryOutputData.fromDomain(Category.newCategory(
+            expectedName,
+            expectedDescription,
+            expectedIsActive
+        ));
+
+        doReturn(expectecActionCategory)
             .when(findByIdUseCase)
-            .execute(entity.getId());
+            .execute(expectecActionCategory.getId());
 
-        mockMvc.perform(get("/categories/" + entity.getId())
+        mockMvc.perform(get("/categories/" + expectecActionCategory.getId())
                .contentType(APPLICATION_JSON))
                .andExpect(status().isOk())
-               .andExpect(content().contentType(APPLICATION_JSON));        
+               .andExpect(content().contentType(APPLICATION_JSON))
+               .andExpect(jsonPath("$.id", is(expectecActionCategory.getId().toString())))
+               .andExpect(jsonPath("$.name", is(expectedName)))
+               .andExpect(jsonPath("$.description", is(expectedDescription)))
+               .andExpect(jsonPath("$.is_active", is(expectedIsActive))); 
     }
     
     @Test
     public void removeCategory() throws Exception {
-        Category entity = new Category(
-            "Action",
-            "",
-            true
-        );
+        final UUID expectedId = UUID.randomUUID();
 
         doNothing()
-            .when(removeUseCase)
-            .execute(entity.getId());
+            .when(removeUseCase).execute(expectedId);
 
-        mockMvc.perform(delete("/categories/" + entity.getId())
+        mockMvc.perform(delete("/categories/" + expectedId.toString())
                .contentType(APPLICATION_JSON))
                .andExpect(status().isNoContent());
     }
 
     @Test
     public void updateCategory() throws Exception {
-        Category entity = new Category(
-            "Action",
-            "",
-            true
-        );
-        UpdateCategoryInputData input = new UpdateCategoryInputData();
-        input.setName("Horror");   
-        input.setDescription(entity.getDescription());
-        input.setIsActive(entity.getIsActive());     
+        final String expectedName = "Horror";
+        final String expectedDescription = "The most watched category";
+        final boolean expectedIsActive = true;
 
-        String payload = updateJson.write(input)
-                                   .getJson();
+        final Category entity = Category.newCategory(
+            "Action",
+            expectedDescription,
+            expectedIsActive
+        );
+
+        final UpdateCategoryInputData input = new UpdateCategoryInputData();
+        input.setName(expectedName);   
+        input.setDescription(expectedDescription);
+        input.setIsActive(expectedIsActive);     
+
+        final String payload = updateJson.write(input).getJson();
 
         doNothing()
-            .when(updateUseCase)
-            .execute(entity.getId(), input);
+            .when(updateUseCase).execute(eq(entity.getId()), eq(input));
 
         mockMvc.perform(put("/categories/" + entity.getId())
                .contentType(APPLICATION_JSON)
                .content(payload))
+               .andDo(MockMvcResultHandlers.print())
                .andExpect(status().isNoContent());
     }
 }
