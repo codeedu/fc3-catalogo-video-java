@@ -41,10 +41,13 @@ public class CategoryPersistence {
     @Column
     private Boolean isActive = true;
 
+    @Column(columnDefinition = "DATETIME(6)")
     private LocalDateTime createdAt;
     
+    @Column(columnDefinition = "DATETIME(6)")
     private LocalDateTime updatedAt;
     
+    @Column(columnDefinition = "DATETIME(6)")
     private LocalDateTime deletedAt;
 
     public static CategoryPersistence from(final Category category) {

@@ -311,7 +311,7 @@ public class CategoryE2ETests extends E2eTest {
     assertEquals(expectedName, actualPersisted.getName());
     assertEquals(expectedDescription, actualPersisted.getDescription());
     assertEquals(expectedIsActive, actualPersisted.getIsActive());
-    assertEquals(expectecSeriesCategory.getCreatedAt().withNano(0), actualPersisted.getCreatedAt().withNano(0));
+    assertEquals(expectecSeriesCategory.getCreatedAt(), actualPersisted.getCreatedAt());
     assertNotEquals(expectecSeriesCategory.getUpdatedAt(), actualPersisted.getUpdatedAt());
     assertNull(actualPersisted.getDeletedAt());
   }
@@ -347,7 +347,7 @@ public class CategoryE2ETests extends E2eTest {
     assertEquals(expectedName, actualPersisted.getName());
     assertEquals(expectedDescription, actualPersisted.getDescription());
     assertEquals(expectedIsActive, actualPersisted.getIsActive());
-    assertEquals(expectecSeriesCategory.getCreatedAt().withNano(0), actualPersisted.getCreatedAt().withNano(0));
+    assertEquals(expectecSeriesCategory.getCreatedAt(), actualPersisted.getCreatedAt());
     assertNotEquals(expectecSeriesCategory.getUpdatedAt(), actualPersisted.getUpdatedAt());
     assertNotNull(actualPersisted.getDeletedAt());
   }
@@ -386,7 +386,7 @@ public class CategoryE2ETests extends E2eTest {
     assertEquals(expectedName, actualPersisted.getName());
     assertEquals(expectedDescription, actualPersisted.getDescription());
     assertEquals(expectedIsActive, actualPersisted.getIsActive());
-    assertEquals(expectecSeriesCategory.getCreatedAt().withNano(0), actualPersisted.getCreatedAt().withNano(0));
+    assertEquals(expectecSeriesCategory.getCreatedAt(), actualPersisted.getCreatedAt());
     assertNotEquals(expectecSeriesCategory.getUpdatedAt(), actualPersisted.getUpdatedAt());
     assertNull(actualPersisted.getDeletedAt());
   }
